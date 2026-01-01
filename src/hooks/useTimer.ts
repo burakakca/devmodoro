@@ -1,12 +1,44 @@
 import { useMachine } from "@xstate/react";
 import { useEffect, useRef } from "react";
-import { timerMachine } from "../machines/timerMachine";
+import { type TimerMode, timerMachine } from "../machines/timerMachine";
 
-export function useTimer(focusDuration: number) {
+interface UseTimerOptions {
+	focusDuration: number;
+	onSessionComplete?: (mode: TimerMode, duration: number) => void;
+}
+
+export function useTimer({
+	focusDuration,
+	onSessionComplete,
+}: UseTimerOptions) {
 	const workerRef = useRef<Worker | null>(null);
+	const sessionStartRef = useRef<number | null>(null);
 	const [state, send] = useMachine(timerMachine, {
 		input: { focusDuration },
 	});
+
+	// Track session start time
+	useEffect(() => {
+		if (state.matches("running") && sessionStartRef.current === null) {
+			sessionStartRef.current = Date.now();
+		}
+	}, [state.matches]);
+
+	// Handle session completion
+	useEffect(() => {
+		if (state.matches("completed") && sessionStartRef.current !== null) {
+			const duration = state.context.duration;
+			const mode = state.context.mode;
+
+			onSessionComplete?.(mode, duration);
+			sessionStartRef.current = null;
+		}
+	}, [
+		state.context.duration,
+		state.context.mode,
+		onSessionComplete,
+		state.matches,
+	]);
 
 	useEffect(() => {
 		// Initialize worker
@@ -36,7 +68,7 @@ export function useTimer(focusDuration: number) {
 				workerRef.current?.postMessage({ type: "STOP" });
 			}
 		}
-	}, [state.matches("running"), state.status]);
+	}, [state.status, state.matches]);
 
 	return { state, send };
 }
