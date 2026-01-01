@@ -9,7 +9,9 @@
 		"lint": "biome lint .",
 		"format": "biome format . --write",
 		"check": "biome check --write .",
-		"preview": "vite preview"
+		"typecheck": "tsc --noEmit",
+		"preview": "vite preview",
+		"prepare": "husky"
 	},
 	"dependencies": {
 		"@xstate/react": "^6.0.0",
@@ -22,6 +24,11 @@
 		"react-dom": "^19.2.0",
 		"xstate": "^5.25.0"
 	},
+	"lint-staged": {
+		"*.{js,ts,jsx,tsx,json,css,md}": [
+			"biome check --write --no-errors-on-unmatched"
+		]
+	},
 	"devDependencies": {
 		"@biomejs/biome": "2.3.10",
 		"@tailwindcss/vite": "^4.1.18",
@@ -30,6 +37,8 @@
 		"@types/react": "^19.2.5",
 		"@types/react-dom": "^19.2.3",
 		"@vitejs/plugin-react": "^5.1.1",
+		"husky": "^9.1.7",
+		"lint-staged": "^16.2.7",
 		"tailwindcss": "^4.1.18",
 		"typescript": "~5.9.3",
 		"vite": "^7.2.4"
