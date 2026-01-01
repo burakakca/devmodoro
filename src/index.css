@@ -1,1 +1,70 @@
 @import "tailwindcss";
+
+:root {
+	--color-primary: 99 102 241;
+	--color-primary-hover: 129 140 248;
+	--color-primary-light: 99 102 241;
+}
+
+/* Theme color utilities */
+.bg-primary {
+	background-color: rgb(var(--color-primary));
+}
+
+.bg-primary-hover:hover {
+	background-color: rgb(var(--color-primary-hover));
+}
+
+.text-primary {
+	color: rgb(var(--color-primary));
+}
+
+.shadow-primary {
+	--tw-shadow-color: rgb(var(--color-primary) / 0.2);
+}
+
+.bg-primary-light {
+	background-color: rgb(var(--color-primary-light) / 0.1);
+}
+
+.border-primary {
+	border-color: rgb(var(--color-primary));
+}
+
+/* Compact mode */
+.compact .timer-container {
+	padding: 1.5rem;
+}
+
+.compact .timer-display {
+	font-size: 4rem;
+}
+
+.compact .timer-controls button {
+	padding: 0.75rem;
+}
+
+.compact .timer-controls button svg {
+	width: 1.5rem;
+	height: 1.5rem;
+}
+
+/* Dark mode when running - dims the screen */
+.running-dark::before {
+	content: "";
+	position: fixed;
+	inset: 0;
+	background-color: rgba(0, 0, 0, 0.3);
+	pointer-events: none;
+	z-index: 40;
+	animation: fadeIn 0.3s ease-out;
+}
+
+@keyframes fadeIn {
+	from {
+		opacity: 0;
+	}
+	to {
+		opacity: 1;
+	}
+}
