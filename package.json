@@ -25,6 +25,9 @@
 		"xstate": "^5.25.0"
 	},
 	"lint-staged": {
+		"*.{ts,tsx}": [
+			"bash -c 'npm run typecheck'"
+		],
 		"*.{js,ts,jsx,tsx,json,css,md}": [
 			"biome check --write --no-errors-on-unmatched"
 		]
