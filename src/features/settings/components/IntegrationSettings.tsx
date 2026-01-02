@@ -1,3 +1,4 @@
+import { useMutation } from "@tanstack/react-query";
 import {
 	CheckCircle,
 	ExternalLink,
@@ -20,64 +21,32 @@ import { ToggleRow } from "./ToggleRow";
 export function IntegrationSettings() {
 	const { settings, updateSettings } = useSettings();
 	const { integration } = settings;
-	const [testStatus, setTestStatus] = useState<
-		"idle" | "testing" | "success" | "error"
-	>("idle");
 
 	// GitHub state
 	const [tokenInput, setTokenInput] = useState("");
-	const [githubStatus, setGithubStatus] = useState<
-		"idle" | "connecting" | "error"
-	>("idle");
-	const [githubError, setGithubError] = useState("");
 
-	const handleChange = (
-		key: keyof typeof integration,
-		value: string | boolean,
-	) => {
-		updateSettings({
-			integration: { ...integration, [key]: value },
-		});
-	};
-
-	const connectGitHub = async () => {
-		if (!tokenInput.trim()) return;
-
-		setGithubStatus("connecting");
-		setGithubError("");
-
-		const result = await validateGitHubToken(tokenInput);
-
-		if (result.isValid && result.user) {
-			const githubSettings = createGitHubSettings(tokenInput, result.user);
+	// Mutation for connecting GitHub
+	const connectGitHubMutation = useMutation({
+		mutationFn: async (token: string) => {
+			const result = await validateGitHubToken(token);
+			if (!result.isValid || !result.user) {
+				throw new Error(result.error ?? "Failed to connect");
+			}
+			return result.user;
+		},
+		onSuccess: (user, token) => {
+			const githubSettings = createGitHubSettings(token, user);
 			updateSettings({
 				integration: { ...integration, github: githubSettings },
 			});
 			setTokenInput("");
-			setGithubStatus("idle");
-		} else {
-			setGithubError(result.error ?? "Failed to connect");
-			setGithubStatus("error");
-		}
-	};
+		},
+	});
 
-	const disconnectGitHub = () => {
-		updateSettings({
-			integration: {
-				...integration,
-				github: createDisconnectedGitHubSettings(),
-			},
-		});
-		setGithubError("");
-	};
-
-	const testWebhook = async () => {
-		if (!integration.webhookUrl) return;
-
-		setTestStatus("testing");
-
-		try {
-			const response = await fetch(integration.webhookUrl, {
+	// Mutation for testing webhook
+	const testWebhookMutation = useMutation({
+		mutationFn: async (webhookUrl: string) => {
+			const response = await fetch(webhookUrl, {
 				method: "POST",
 				headers: {
 					"Content-Type": "application/json",
@@ -88,13 +57,43 @@ export function IntegrationSettings() {
 					message: "Test webhook from Devmodoro",
 				}),
 			});
+			if (!response.ok) {
+				throw new Error("Webhook test failed");
+			}
+			return response;
+		},
+		onSettled: () => {
+			setTimeout(() => testWebhookMutation.reset(), 3000);
+		},
+	});
 
-			setTestStatus(response.ok ? "success" : "error");
-		} catch {
-			setTestStatus("error");
-		}
+	const handleChange = (
+		key: keyof typeof integration,
+		value: string | boolean,
+	) => {
+		updateSettings({
+			integration: { ...integration, [key]: value },
+		});
+	};
 
-		setTimeout(() => setTestStatus("idle"), 3000);
+	const connectGitHub = () => {
+		if (!tokenInput.trim()) return;
+		connectGitHubMutation.mutate(tokenInput);
+	};
+
+	const disconnectGitHub = () => {
+		updateSettings({
+			integration: {
+				...integration,
+				github: createDisconnectedGitHubSettings(),
+			},
+		});
+		connectGitHubMutation.reset();
+	};
+
+	const testWebhook = () => {
+		if (!integration.webhookUrl) return;
+		testWebhookMutation.mutate(integration.webhookUrl);
 	};
 
 	return (
@@ -176,35 +175,38 @@ export function IntegrationSettings() {
 										value={tokenInput}
 										onChange={(e) => {
 											setTokenInput(e.target.value);
-											if (githubStatus === "error") {
-												setGithubStatus("idle");
-												setGithubError("");
+											if (connectGitHubMutation.isError) {
+												connectGitHubMutation.reset();
 											}
 										}}
 										placeholder="ghp_xxxxxxxxxxxxxxxxxxxx"
 										className={`flex-1 px-3 py-2 bg-theme-bg-tertiary border rounded-lg text-theme-text placeholder-theme-text-muted focus:outline-none focus:ring-2 focus:ring-primary ${
-											githubError ? "border-red-400" : "border-theme-border"
+											connectGitHubMutation.isError
+												? "border-red-400"
+												: "border-theme-border"
 										}`}
-										aria-invalid={!!githubError}
+										aria-invalid={connectGitHubMutation.isError}
 										aria-describedby={
-											githubError ? "github-error github-help" : "github-help"
+											connectGitHubMutation.isError
+												? "github-error github-help"
+												: "github-help"
 										}
 									/>
 									<button
 										type="button"
 										onClick={connectGitHub}
 										disabled={
-											!tokenInput.trim() || githubStatus === "connecting"
+											!tokenInput.trim() || connectGitHubMutation.isPending
 										}
-										aria-busy={githubStatus === "connecting"}
+										aria-busy={connectGitHubMutation.isPending}
 										aria-label={
-											githubStatus === "connecting"
+											connectGitHubMutation.isPending
 												? "Connecting to GitHub..."
 												: "Connect to GitHub"
 										}
 										className="px-4 py-2 bg-primary hover:bg-primary-hover disabled:opacity-50 disabled:cursor-not-allowed text-primary-foreground rounded-lg transition-colors flex items-center gap-2 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2"
 									>
-										{githubStatus === "connecting" ? (
+										{connectGitHubMutation.isPending ? (
 											<>
 												<Loader2
 													className="w-4 h-4 animate-spin"
@@ -217,7 +219,7 @@ export function IntegrationSettings() {
 										)}
 									</button>
 								</div>
-								{githubError && (
+								{connectGitHubMutation.isError && (
 									<p
 										id="github-error"
 										role="alert"
@@ -225,7 +227,7 @@ export function IntegrationSettings() {
 										className="mt-2 text-sm text-red-400 flex items-center gap-1"
 									>
 										<XCircle className="w-4 h-4" aria-hidden="true" />
-										{githubError}
+										{connectGitHubMutation.error.message}
 									</p>
 								)}
 								<p
@@ -292,13 +294,13 @@ export function IntegrationSettings() {
 										type="button"
 										onClick={testWebhook}
 										disabled={
-											!integration.webhookUrl || testStatus === "testing"
+											!integration.webhookUrl || testWebhookMutation.isPending
 										}
 										className="px-4 py-2 bg-theme-bg-tertiary hover:bg-theme-bg-secondary disabled:opacity-50 disabled:cursor-not-allowed text-theme-text rounded-lg transition-colors flex items-center gap-2 focus:outline-none focus:ring-2 focus:ring-primary"
 									>
-										{testStatus === "testing" ? (
+										{testWebhookMutation.isPending ? (
 											"Testing..."
-										) : testStatus === "success" ? (
+										) : testWebhookMutation.isSuccess ? (
 											<>
 												<CheckCircle
 													className="w-4 h-4 text-green-400"
@@ -306,7 +308,7 @@ export function IntegrationSettings() {
 												/>
 												Success
 											</>
-										) : testStatus === "error" ? (
+										) : testWebhookMutation.isError ? (
 											<>
 												<XCircle
 													className="w-4 h-4 text-red-400"

@@ -1,3 +1,8 @@
+import {
+	useInfiniteQuery,
+	useMutation,
+	useQueryClient,
+} from "@tanstack/react-query";
 import { useLiveQuery } from "dexie-react-hooks";
 import {
 	AlertCircle,
@@ -10,7 +15,7 @@ import {
 	Search,
 	X,
 } from "lucide-react";
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useMemo, useState } from "react";
 import { db } from "@/db/db";
 import {
 	type GitHubIssue,
@@ -25,22 +30,61 @@ interface GitHubIssueListProps {
 }
 
 export function GitHubIssueList({ onIssueImported }: GitHubIssueListProps) {
+	const queryClient = useQueryClient();
 	const { settings } = useSettings();
 	const { github } = settings.integration;
 
-	const [issues, setIssues] = useState<GitHubIssue[]>([]);
-	const [isLoading, setIsLoading] = useState(false);
-	const [error, setError] = useState<string | null>(null);
-	const [hasMore, setHasMore] = useState(false);
-	const [page, setPage] = useState(1);
 	const [searchQuery, setSearchQuery] = useState("");
-
-	// Import state
-	const [processingIds, setProcessingIds] = useState<Set<number>>(new Set());
 	const [importingIssueId, setImportingIssueId] = useState<number | null>(null);
 	const [estimate, setEstimate] = useState(1);
 
-	// Get existing tasks to prevent duplicates
+	// TanStack Query for fetching issues
+	const {
+		data,
+		error,
+		fetchNextPage,
+		hasNextPage,
+		isFetching,
+		isFetchingNextPage,
+		isLoading,
+		refetch,
+	} = useInfiniteQuery({
+		queryKey: ["github-issues", github.token],
+		queryFn: ({ pageParam = 1 }) => getAssignedIssues(github.token, pageParam),
+		getNextPageParam: (lastPage, allPages) => {
+			return lastPage.hasMore ? allPages.length + 1 : undefined;
+		},
+		enabled: github.isConnected && !!github.token,
+	});
+
+	// Mutation for importing tasks
+	const importMutation = useMutation({
+		mutationFn: async ({
+			issue,
+			estimatedPomos,
+		}: {
+			issue: GitHubIssue;
+			estimatedPomos: number;
+		}) => {
+			return createTask({
+				title: `#${issue.number} ${issue.title}`,
+				estimatedPomos,
+				externalLink: issue.html_url,
+				status: "todo",
+			});
+		},
+		onSuccess: (_, variables) => {
+			onIssueImported?.(variables.issue.html_url);
+			// We don't necessarily need to invalidate github-issues since we use dexie for imported status
+		},
+	});
+
+	// Flatten all pages into a single issues array
+	const allIssues = useMemo(() => {
+		return data?.pages.flatMap((page) => page.issues) ?? [];
+	}, [data]);
+
+	// Get existing tasks to prevent duplicates (still using live query for local DB reactivity)
 	const existingTasks = useLiveQuery(() => db.tasks.toArray());
 	const importedUrls = useMemo(() => {
 		const urls = new Set<string>();
@@ -49,50 +93,6 @@ export function GitHubIssueList({ onIssueImported }: GitHubIssueListProps) {
 		});
 		return urls;
 	}, [existingTasks]);
-
-	const fetchIssues = useCallback(
-		async (pageNum: number, append = false) => {
-			if (!github.isConnected || !github.token) return;
-
-			setIsLoading(true);
-			setError(null);
-
-			const result = await getAssignedIssues(github.token, pageNum);
-
-			if (result.error) {
-				setError(result.error);
-			} else {
-				setIssues((prev) =>
-					append ? [...prev, ...result.issues] : result.issues,
-				);
-				setHasMore(result.hasMore);
-			}
-
-			setIsLoading(false);
-		},
-		[github.isConnected, github.token],
-	);
-
-	// Fetch issues when connected
-	useEffect(() => {
-		if (github.isConnected) {
-			fetchIssues(1);
-		} else {
-			setIssues([]);
-			setError(null);
-		}
-	}, [github.isConnected, fetchIssues]);
-
-	const handleRefresh = () => {
-		setPage(1);
-		fetchIssues(1);
-	};
-
-	const handleLoadMore = () => {
-		const nextPage = page + 1;
-		setPage(nextPage);
-		fetchIssues(nextPage, true);
-	};
 
 	const startImport = (issueId: number) => {
 		setImportingIssueId(issueId);
@@ -106,33 +106,15 @@ export function GitHubIssueList({ onIssueImported }: GitHubIssueListProps) {
 
 	const confirmImport = async (issue: GitHubIssue) => {
 		setImportingIssueId(null);
-		setProcessingIds((prev) => new Set(prev).add(issue.id));
-
-		try {
-			await createTask({
-				title: `#${issue.number} ${issue.title}`,
-				estimatedPomos: estimate,
-				externalLink: issue.html_url,
-				status: "todo",
-			});
-			onIssueImported?.(issue.html_url);
-		} catch (err) {
-			console.error("Failed to import issue as task:", err);
-		} finally {
-			setProcessingIds((prev) => {
-				const next = new Set(prev);
-				next.delete(issue.id);
-				return next;
-			});
-		}
+		importMutation.mutate({ issue, estimatedPomos: estimate });
 	};
 
 	// Filter issues by search query
 	const filteredIssues = useMemo(() => {
-		if (!searchQuery.trim()) return issues;
+		if (!searchQuery.trim()) return allIssues;
 
 		const query = searchQuery.toLowerCase();
-		return issues.filter(
+		return allIssues.filter(
 			(issue) =>
 				issue.title.toLowerCase().includes(query) ||
 				issue.repository.full_name.toLowerCase().includes(query) ||
@@ -141,7 +123,7 @@ export function GitHubIssueList({ onIssueImported }: GitHubIssueListProps) {
 				) ||
 				String(issue.number).includes(query),
 		);
-	}, [issues, searchQuery]);
+	}, [allIssues, searchQuery]);
 
 	if (!github.isConnected) {
 		return (
@@ -178,13 +160,13 @@ export function GitHubIssueList({ onIssueImported }: GitHubIssueListProps) {
 				</div>
 				<button
 					type="button"
-					onClick={handleRefresh}
-					disabled={isLoading}
+					onClick={() => refetch()}
+					disabled={isFetching}
 					aria-label="Refresh issues"
 					className="p-2 text-theme-text-secondary hover:text-theme-text hover:bg-theme-bg-tertiary rounded-lg transition-colors disabled:opacity-50 focus:outline-none focus:ring-2 focus:ring-primary"
 				>
 					<RefreshCw
-						className={`w-4 h-4 ${isLoading ? "animate-spin" : ""}`}
+						className={`w-4 h-4 ${isFetching ? "animate-spin" : ""}`}
 						aria-hidden="true"
 					/>
 				</button>
@@ -197,12 +179,14 @@ export function GitHubIssueList({ onIssueImported }: GitHubIssueListProps) {
 					className="flex items-center gap-2 p-3 bg-red-500/10 text-red-400 rounded-lg text-sm"
 				>
 					<AlertCircle className="w-4 h-4 flex-shrink-0" aria-hidden="true" />
-					<span>{error}</span>
+					<span>
+						{error instanceof Error ? error.message : "Failed to fetch issues"}
+					</span>
 				</div>
 			)}
 
 			{/* Loading state */}
-			{isLoading && issues.length === 0 && (
+			{isLoading && (
 				<output
 					className="flex items-center justify-center py-8"
 					aria-label="Loading issues"
@@ -234,7 +218,9 @@ export function GitHubIssueList({ onIssueImported }: GitHubIssueListProps) {
 				<ul className="space-y-2" aria-label="GitHub assigned issues">
 					{filteredIssues.map((issue) => {
 						const isImporting = importingIssueId === issue.id;
-						const isProcessing = processingIds.has(issue.id);
+						const isProcessing =
+							importMutation.isPending &&
+							importMutation.variables?.issue.id === issue.id;
 						const isImported = importedUrls.has(issue.html_url);
 
 						return (
@@ -382,18 +368,19 @@ export function GitHubIssueList({ onIssueImported }: GitHubIssueListProps) {
 			)}
 
 			{/* Load more */}
-			{hasMore && !isLoading && (
+			{hasNextPage && (
 				<button
 					type="button"
-					onClick={handleLoadMore}
-					className="w-full py-2 text-sm text-theme-text-secondary hover:text-theme-text hover:bg-theme-bg-tertiary rounded-lg transition-colors focus:outline-none focus:ring-2 focus:ring-primary"
+					onClick={() => fetchNextPage()}
+					disabled={isFetchingNextPage}
+					className="w-full py-2 text-sm text-theme-text-secondary hover:text-theme-text hover:bg-theme-bg-tertiary rounded-lg transition-colors focus:outline-none focus:ring-2 focus:ring-primary disabled:opacity-50"
 				>
-					Load more issues
+					{isFetchingNextPage ? "Loading more..." : "Load more issues"}
 				</button>
 			)}
 
 			{/* Loading more indicator */}
-			{isLoading && issues.length > 0 && (
+			{isFetchingNextPage && (
 				<output
 					className="flex items-center justify-center py-2"
 					aria-label="Loading more issues"

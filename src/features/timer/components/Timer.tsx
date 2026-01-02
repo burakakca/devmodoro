@@ -1,3 +1,4 @@
+import { useMutation } from "@tanstack/react-query";
 import { motion } from "framer-motion";
 import {
 	Brain,
@@ -52,10 +53,7 @@ export function Timer() {
 	const [showCelebration, setShowCelebration] = useState(false);
 	const [showBreakModal, setShowBreakModal] = useState(false);
 	const [showGitHubPrompt, setShowGitHubPrompt] = useState(false);
-	const [gitHubPostStatus, setGitHubPostStatus] = useState<
-		"idle" | "posting" | "success" | "error"
-	>("idle");
-	const [gitHubError, setGitHubError] = useState<string | null>(null);
+
 	const lastCompletedSessionRef = useRef<{
 		mode: TimerMode;
 		duration: number;
@@ -65,6 +63,31 @@ export function Timer() {
 	const reducedMotion = useReducedMotion();
 	const hasHandledCompletionRef = useRef(false);
 	const pendingActionRef = useRef<"start" | null>(null);
+
+	// Mutation for posting GitHub comments
+	const postCommentMutation = useMutation({
+		mutationFn: async ({
+			token,
+			issueUrl,
+			comment,
+		}: {
+			token: string;
+			issueUrl: string;
+			comment: string;
+		}) => {
+			const result = await postIssueComment(token, issueUrl, comment);
+			if (!result.success) {
+				throw new Error(result.error ?? "Failed to post comment");
+			}
+			return result;
+		},
+		onSuccess: () => {
+			setTimeout(() => {
+				setShowGitHubPrompt(false);
+				postCommentMutation.reset();
+			}, 2000);
+		},
+	});
 
 	// Calculate duration based on current mode
 	const getDuration = useCallback(
@@ -123,24 +146,20 @@ export function Timer() {
 							mode: sessionMode,
 							taskTitle: selectedTask.title,
 						});
-						const result = await postIssueComment(
-							integration.github.token,
-							selectedTask.externalLink,
+						postCommentMutation.mutate({
+							token: integration.github.token,
+							issueUrl: selectedTask.externalLink,
 							comment,
-						);
-						if (!result.success) {
-							console.error("Failed to auto-post to GitHub:", result.error);
-						}
+						});
 					} else if (integration.github.isConnected) {
 						// Show manual log prompt
 						setShowGitHubPrompt(true);
-						setGitHubPostStatus("idle");
-						setGitHubError(null);
+						postCommentMutation.reset();
 					}
 				}
 			}
 		},
-		[selectedTask, playAlarm, integration],
+		[selectedTask, playAlarm, integration, postCommentMutation],
 	);
 
 	const handlePomosChange = useCallback(async (count: number) => {
@@ -327,15 +346,7 @@ export function Timer() {
 		}
 
 		if (mode === "focus" && selectedTask) {
-			if (selectedTask.status === "done") {
-				if (
-					window.confirm("This task is completed. Do you want to restart it?")
-				) {
-					await updateTask(selectedTask.id, { status: "in-progress" });
-				} else {
-					return;
-				}
-			} else if (selectedTask.status === "todo") {
+			if (selectedTask.status === "todo") {
 				await updateTask(selectedTask.id, { status: "in-progress" });
 			}
 		}
@@ -386,37 +397,22 @@ export function Timer() {
 		const session = lastCompletedSessionRef.current;
 		if (!session?.externalLink || !integration.github.token) return;
 
-		setGitHubPostStatus("posting");
-		setGitHubError(null);
-
 		const comment = generateSessionComment({
 			duration: session.duration,
 			mode: timerModeToSessionMode(session.mode),
 			taskTitle: session.taskTitle,
 		});
 
-		const result = await postIssueComment(
-			integration.github.token,
-			session.externalLink,
+		postCommentMutation.mutate({
+			token: integration.github.token,
+			issueUrl: session.externalLink,
 			comment,
-		);
-
-		if (result.success) {
-			setGitHubPostStatus("success");
-			setTimeout(() => {
-				setShowGitHubPrompt(false);
-				setGitHubPostStatus("idle");
-			}, 2000);
-		} else {
-			setGitHubPostStatus("error");
-			setGitHubError(result.error ?? "Failed to post comment");
-		}
+		});
 	};
 
 	const dismissGitHubPrompt = () => {
 		setShowGitHubPrompt(false);
-		setGitHubPostStatus("idle");
-		setGitHubError(null);
+		postCommentMutation.reset();
 		lastCompletedSessionRef.current = null;
 	};
 
@@ -571,15 +567,22 @@ export function Timer() {
 			</div>
 
 			{/* Stats */}
-			<div className="mt-8 flex items-center gap-4 text-theme-text-muted text-sm">
-				<span>Completed: {completedPomos}</span>
-				{timerSettings.longBreakInterval > 0 && (
-					<span className="text-theme-text-muted opacity-70">
-						(Long break in{" "}
-						{timerSettings.longBreakInterval -
-							(completedPomos % timerSettings.longBreakInterval)}
-						)
-					</span>
+			<div className="mt-8 flex items-center justify-center gap-4 text-theme-text-muted text-sm min-h-[1.5rem]">
+				{timerSettings.longBreakInterval > 0 ? (
+					<>
+						<span className="font-medium">
+							Pomos: {(completedPomos % timerSettings.longBreakInterval) + 1} /{" "}
+							{timerSettings.longBreakInterval}
+						</span>
+						<span className="text-theme-text-muted opacity-70">
+							(Long break in{" "}
+							{timerSettings.longBreakInterval -
+								(completedPomos % timerSettings.longBreakInterval)}
+							)
+						</span>
+					</>
+				) : (
+					<span className="opacity-70">Focus Mode</span>
 				)}
 			</div>
 
@@ -608,23 +611,25 @@ export function Timer() {
 					<p className="text-xs text-theme-text-secondary mb-3">
 						Post a session summary to the linked issue
 					</p>
-					{gitHubError && (
-						<p className="text-xs text-red-400 mb-2">{gitHubError}</p>
+					{postCommentMutation.isError && (
+						<p className="text-xs text-red-400 mb-2">
+							{postCommentMutation.error.message}
+						</p>
 					)}
 					<button
 						type="button"
 						onClick={handleLogToGitHub}
 						disabled={
-							gitHubPostStatus === "posting" || gitHubPostStatus === "success"
+							postCommentMutation.isPending || postCommentMutation.isSuccess
 						}
 						className="w-full py-2 px-4 bg-primary hover:bg-primary-hover disabled:opacity-50 text-primary-foreground rounded-lg text-sm font-medium transition-colors flex items-center justify-center gap-2"
 					>
-						{gitHubPostStatus === "posting" ? (
+						{postCommentMutation.isPending ? (
 							<>
 								<Loader2 className="w-4 h-4 animate-spin" aria-hidden="true" />
 								Posting...
 							</>
-						) : gitHubPostStatus === "success" ? (
+						) : postCommentMutation.isSuccess ? (
 							<>
 								<CheckCircle className="w-4 h-4" aria-hidden="true" />
 								Posted!
