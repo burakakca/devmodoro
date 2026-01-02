@@ -16,6 +16,8 @@
 	"dependencies": {
 		"@tanstack/react-query": "^5.90.16",
 		"@tanstack/react-query-devtools": "^5.91.2",
+		"@tanstack/react-router": "^1.144.0",
+		"@tanstack/router-vite-plugin": "^1.145.2",
 		"@xstate/react": "^6.0.0",
 		"dexie": "^4.2.1",
 		"dexie-react-hooks": "^4.2.0",
@@ -24,6 +26,7 @@
 		"lucide-react": "^0.562.0",
 		"react": "^19.2.0",
 		"react-dom": "^19.2.0",
+		"recharts": "^3.6.0",
 		"xstate": "^5.25.0"
 	},
 	"lint-staged": {
