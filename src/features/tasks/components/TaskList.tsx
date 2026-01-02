@@ -1,6 +1,7 @@
 import { useLiveQuery } from "dexie-react-hooks";
 import { AnimatePresence, motion } from "framer-motion";
-import { CheckCircle2, Circle, Clock } from "lucide-react";
+import { CheckCircle2, ChevronDown, Circle, Clock } from "lucide-react";
+import { useState } from "react";
 import {
 	AnimatedContainer,
 	useReducedMotion,
@@ -32,12 +33,15 @@ function TaskGroup({
 	tasks,
 	selectedTaskId,
 	onSelectTask,
+	defaultExpanded = true,
 }: {
 	status: TaskStatus;
 	tasks: Task[];
 	selectedTaskId?: string;
 	onSelectTask?: (task: Task) => void;
+	defaultExpanded?: boolean;
 }) {
+	const [isExpanded, setIsExpanded] = useState(defaultExpanded);
 	const config = STATUS_CONFIG[status];
 	const reducedMotion = useReducedMotion();
 
@@ -45,35 +49,60 @@ function TaskGroup({
 
 	return (
 		<div className="space-y-2">
-			<h3
-				id={`task-group-${status}`}
-				className={`text-sm font-medium uppercase tracking-wider ${config.color}`}
+			<button
+				type="button"
+				onClick={() => setIsExpanded(!isExpanded)}
+				className="flex items-center gap-2 w-full text-left focus:outline-none group"
 			>
-				{config.label} ({tasks.length})
-			</h3>
-			<ul className="space-y-2" aria-labelledby={`task-group-${status}`}>
-				<AnimatePresence mode="popLayout">
-					{tasks.map((task, index) => (
-						<motion.div
-							key={task.id}
-							layout={!reducedMotion}
-							initial={reducedMotion ? false : { opacity: 0, y: 10 }}
-							animate={{ opacity: 1, y: 0 }}
-							exit={reducedMotion ? undefined : { opacity: 0, x: -20 }}
-							transition={{
-								duration: 0.2,
-								delay: index * 0.05,
-							}}
+				<h3
+					id={`task-group-${status}`}
+					className={`text-sm font-medium uppercase tracking-wider flex-1 ${config.color}`}
+				>
+					{config.label} ({tasks.length})
+				</h3>
+				<ChevronDown
+					className={`w-4 h-4 transition-transform duration-200 ${
+						isExpanded ? "rotate-0" : "-rotate-90"
+					} text-theme-text-muted group-hover:text-theme-text`}
+				/>
+			</button>
+
+			<AnimatePresence initial={false}>
+				{isExpanded && (
+					<motion.div
+						initial={reducedMotion ? false : { height: 0, opacity: 0 }}
+						animate={{ height: "auto", opacity: 1 }}
+						exit={reducedMotion ? undefined : { height: 0, opacity: 0 }}
+						transition={{ duration: 0.2, ease: "easeInOut" }}
+						className="overflow-hidden"
+					>
+						<ul
+							className="space-y-2 pt-1"
+							aria-labelledby={`task-group-${status}`}
 						>
-							<TaskItem
-								task={task}
-								isSelected={task.id === selectedTaskId}
-								onSelect={() => onSelectTask?.(task)}
-							/>
-						</motion.div>
-					))}
-				</AnimatePresence>
-			</ul>
+							{tasks.map((task, index) => (
+								<motion.div
+									key={task.id}
+									layout={!reducedMotion}
+									initial={reducedMotion ? false : { opacity: 0, y: 10 }}
+									animate={{ opacity: 1, y: 0 }}
+									exit={reducedMotion ? undefined : { opacity: 0, x: -20 }}
+									transition={{
+										duration: 0.2,
+										delay: index * 0.05,
+									}}
+								>
+									<TaskItem
+										task={task}
+										isSelected={task.id === selectedTaskId}
+										onSelect={() => onSelectTask?.(task)}
+									/>
+								</motion.div>
+							))}
+						</ul>
+					</motion.div>
+				)}
+			</AnimatePresence>
 		</div>
 	);
 }
@@ -127,6 +156,7 @@ export function TaskList({ onSelectTask, selectedTaskId }: TaskListProps) {
 				tasks={groupedTasks.done}
 				selectedTaskId={selectedTaskId}
 				onSelectTask={onSelectTask}
+				defaultExpanded={false}
 			/>
 		</div>
 	);
