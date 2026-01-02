@@ -31,6 +31,8 @@ export type ColorTheme =
 	| "cyan"
 	| "pink";
 
+export type AppTheme = "dark" | "light" | "system";
+
 export type HourFormat = "12h" | "24h";
 
 export interface TimerSettings {
@@ -61,6 +63,7 @@ export interface SoundSettings {
 }
 
 export interface ThemeSettings {
+	appTheme: AppTheme;
 	colorTheme: ColorTheme;
 	hourFormat: HourFormat;
 	darkModeWhenRunning: boolean;
@@ -72,9 +75,21 @@ export interface NotificationSettings {
 	browserNotifications: boolean;
 }
 
+export interface GitHubSettings {
+	token: string;
+	username: string;
+	isConnected: boolean;
+}
+
 export interface IntegrationSettings {
 	webhookUrl: string;
 	webhookEnabled: boolean;
+	github: GitHubSettings;
+	autoPostToGitHub: boolean;
+}
+
+export interface StateSettings {
+	completedPomos: number;
 }
 
 export interface Settings {
@@ -85,4 +100,5 @@ export interface Settings {
 	theme: ThemeSettings;
 	notification: NotificationSettings;
 	integration: IntegrationSettings;
+	state: StateSettings;
 }

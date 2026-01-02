@@ -1,37 +1,174 @@
 @import "tailwindcss";
 
 :root {
-	--color-primary: 99 102 241;
-	--color-primary-hover: 129 140 248;
-	--color-primary-light: 99 102 241;
+	--background: rgb(255 255 255);
+	--foreground: rgb(15 23 42);
+	--card: rgb(255 255 255);
+	--card-foreground: rgb(15 23 42);
+	--popover: rgb(255 255 255);
+	--popover-foreground: rgb(15 23 42);
+	--primary: rgb(99 102 241);
+	--primary-foreground: rgb(255 255 255);
+	--secondary: rgb(241 245 249);
+	--secondary-foreground: rgb(15 23 42);
+	--muted: rgb(241 245 249);
+	--muted-foreground: rgb(100 116 139);
+	--accent: rgb(241 245 249);
+	--accent-foreground: rgb(15 23 42);
+	--destructive: rgb(239 68 68);
+	--destructive-foreground: rgb(255 255 255);
+	--border: rgb(226 232 240);
+	--input: rgb(226 232 240);
+	--ring: rgb(99 102 241);
+	--radius: 0.75rem;
+
+	/* Accent Color Overrides - Light */
+	&.accent-red {
+		--primary: rgb(220 38 38);
+		--ring: rgb(220 38 38);
+	}
+	&.accent-blue {
+		--primary: rgb(37 99 235);
+		--ring: rgb(37 99 235);
+	}
+	&.accent-green {
+		--primary: rgb(22 163 74);
+		--ring: rgb(22 163 74);
+	}
+	&.accent-purple {
+		--primary: rgb(147 51 234);
+		--ring: rgb(147 51 234);
+	}
+	&.accent-orange {
+		--primary: rgb(234 88 12);
+		--ring: rgb(234 88 12);
+	}
+	&.accent-cyan {
+		--primary: rgb(8 145 178);
+		--ring: rgb(8 145 178);
+	}
+	&.accent-pink {
+		--primary: rgb(219 39 119);
+		--ring: rgb(219 39 119);
+	}
 }
 
-/* Theme color utilities */
-.bg-primary {
-	background-color: rgb(var(--color-primary));
+.dark {
+	--background: rgb(2 6 23);
+	--foreground: rgb(248 250 252);
+	--card: rgb(15 23 42);
+	--card-foreground: rgb(248 250 252);
+	--popover: rgb(15 23 42);
+	--popover-foreground: rgb(248 250 252);
+	--primary: rgb(129 140 248);
+	--primary-foreground: rgb(255 255 255);
+	--secondary: rgb(30 41 59);
+	--secondary-foreground: rgb(248 250 252);
+	--muted: rgb(30 41 59);
+	--muted-foreground: rgb(148 163 184);
+	--accent: rgb(30 41 59);
+	--accent-foreground: rgb(248 250 252);
+	--destructive: rgb(239 68 68);
+	--destructive-foreground: rgb(255 255 255);
+	--border: rgb(51 65 85);
+	--input: rgb(51 65 85);
+	--ring: rgb(129 140 248);
+
+	/* Accent Color Overrides - Dark */
+	&.accent-red {
+		--primary: rgb(248 113 113);
+		--ring: rgb(248 113 113);
+	}
+	&.accent-blue {
+		--primary: rgb(96 165 250);
+		--ring: rgb(96 165 250);
+	}
+	&.accent-green {
+		--primary: rgb(74 222 128);
+		--ring: rgb(74 222 128);
+	}
+	&.accent-purple {
+		--primary: rgb(192 132 252);
+		--ring: rgb(192 132 252);
+	}
+	&.accent-orange {
+		--primary: rgb(251 146 60);
+		--ring: rgb(251 146 60);
+	}
+	&.accent-cyan {
+		--primary: rgb(34 211 238);
+		--ring: rgb(34 211 238);
+	}
+	&.accent-pink {
+		--primary: rgb(244 114 182);
+		--ring: rgb(244 114 182);
+	}
 }
 
-.bg-primary-hover:hover {
-	background-color: rgb(var(--color-primary-hover));
+@theme inline {
+	--color-background: var(--background);
+	--color-foreground: var(--foreground);
+	--color-card: var(--card);
+	--color-card-foreground: var(--card-foreground);
+	--color-popover: var(--popover);
+	--color-popover-foreground: var(--popover-foreground);
+	--color-primary: var(--primary);
+	--color-primary-foreground: var(--primary-foreground);
+	--color-secondary: var(--secondary);
+	--color-secondary-foreground: var(--secondary-foreground);
+	--color-muted: var(--muted);
+	--color-muted-foreground: var(--muted-foreground);
+	--color-accent: var(--accent);
+	--color-accent-foreground: var(--accent-foreground);
+	--color-destructive: var(--destructive);
+	--color-destructive-foreground: var(--destructive-foreground);
+	--color-border: var(--border);
+	--color-input: var(--input);
+	--color-ring: var(--ring);
+
+	--color-rain: #0ea5e9;
+	--color-fire: #f97316;
+	--color-coffee: #b45309;
+
+	/* Semantic tokens */
+	--color-success: #22c55e;
+	--color-warning: #f59e0b;
+	--color-error: #ef4444;
+
+	/* Semantic mappings for the components */
+	--color-primary-light: color-mix(in srgb, var(--primary), transparent 90%);
+	--color-success-light: color-mix(in srgb, var(--success), transparent 90%);
+	--color-warning-light: color-mix(in srgb, var(--warning), transparent 90%);
+	--color-error-light: color-mix(in srgb, var(--error), transparent 90%);
+
+	--color-theme-text: var(--foreground);
+	--color-theme-text-secondary: var(--muted-foreground);
+	--color-theme-text-muted: color-mix(
+		in srgb,
+		var(--muted-foreground),
+		transparent 40%
+	);
+	--color-theme-bg: var(--background);
+	--color-theme-bg-secondary: var(--card);
+	--color-theme-bg-tertiary: var(--secondary);
+	--color-theme-border: var(--border);
+	--color-ring: var(--ring);
+
+	--radius-sm: calc(var(--radius) - 4px);
+	--radius-md: calc(var(--radius) - 2px);
+	--radius-lg: var(--radius);
+	--radius-xl: calc(var(--radius) + 4px);
 }
 
-.text-primary {
-	color: rgb(var(--color-primary));
+/* Theme transition */
+* {
+	transition:
+		background-color 0.3s ease,
+		color 0.3s ease,
+		border-color 0.3s ease;
 }
 
-.shadow-primary {
-	--tw-shadow-color: rgb(var(--color-primary) / 0.2);
-}
-
-.bg-primary-light {
-	background-color: rgb(var(--color-primary-light) / 0.1);
-}
-
-.border-primary {
-	border-color: rgb(var(--color-primary));
-}
-
-/* Compact mode */
+/* Compact mode modifiers */
 .compact .timer-container {
 	padding: 1.5rem;
 }

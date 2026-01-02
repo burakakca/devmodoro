@@ -1,86 +1,205 @@
-import { Settings } from "lucide-react";
-import { useState } from "react";
-import { SettingsModal } from "./components/settings/SettingsModal";
-import { TaskForm } from "./components/TaskForm";
-import { TaskList } from "./components/TaskList";
-import { Timer } from "./components/Timer";
-import { SettingsProvider } from "./contexts/SettingsContext";
-import { TaskProvider, useSelectedTask } from "./contexts/TaskContext";
-import { ThemeProvider } from "./contexts/ThemeContext";
+import { Github, ListPlus, Settings } from "lucide-react";
+import { lazy, Suspense, useState } from "react";
+import { SoundMixer } from "@/features/audio/components/SoundMixer";
+import { useSettings } from "@/features/settings/context/SettingsContext";
+import { useThemeContext } from "@/features/settings/context/ThemeContext";
+import { TaskForm } from "@/features/tasks/components/TaskForm";
+import { TaskList } from "@/features/tasks/components/TaskList";
+import { useSelectedTask } from "@/features/tasks/context/TaskContext";
+import { Timer } from "@/features/timer/components/Timer";
+import type { Task } from "@/types";
+import { AppProviders } from "./AppProviders";
+
+// Lazy load heavy components
+const GitHubIssueList = lazy(() =>
+	import("@/features/github/components/GitHubIssueList").then((module) => ({
+		default: module.GitHubIssueList,
+	})),
+);
+const SettingsModal = lazy(() =>
+	import("@/features/settings/components/SettingsModal").then((module) => ({
+		default: module.SettingsModal,
+	})),
+);
+
+type SidebarTab = "addTask" | "github";
 
 function AppContent() {
 	const { selectTask, selectedTask } = useSelectedTask();
+	const { settings } = useSettings();
+	const { isTimerRunning } = useThemeContext();
 	const [isSettingsOpen, setIsSettingsOpen] = useState(false);
+	const [activeTab, setActiveTab] = useState<SidebarTab>("addTask");
+	const isGitHubConnected = settings.integration.github.isConnected;
+
+	const handleSelectTask = (task: Task) => {
+		if (isTimerRunning && selectedTask && task.id !== selectedTask.id) {
+			if (
+				!window.confirm(
+					"Timer is running. Switching tasks will reset the timer. Continue?",
+				)
+			) {
+				return;
+			}
+		}
+		selectTask(task);
+	};
 
 	return (
-		<div className="min-h-screen bg-slate-950 p-4 lg:p-8">
+		<div className="min-h-screen bg-theme-bg p-4 lg:p-8">
+			<a
+				href="#main-timer"
+				className="sr-only focus:not-sr-only focus:fixed focus:top-4 focus:left-4 focus:z-[100] focus:px-4 focus:py-2 focus:bg-primary focus:text-white focus:rounded-lg focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary"
+			>
+				Skip to main content
+			</a>
 			<div className="max-w-7xl mx-auto">
 				<header className="mb-8 flex items-center justify-between">
 					<div className="text-center lg:text-left flex-1">
-						<h1 className="text-3xl lg:text-4xl font-bold text-white mb-1 tracking-tight">
+						<h1 className="text-3xl lg:text-4xl font-bold text-theme-text mb-1 tracking-tight">
 							Devmodoro
 						</h1>
-						<p className="text-slate-400 text-sm">
+						<p className="text-theme-text-secondary text-sm">
 							Developer Productivity Station
 						</p>
 					</div>
 					<button
 						type="button"
 						onClick={() => setIsSettingsOpen(true)}
-						className="p-3 text-slate-400 hover:text-white hover:bg-slate-800 rounded-lg transition-colors"
+						className="p-3 text-theme-text-secondary hover:text-theme-text hover:bg-theme-bg-tertiary rounded-lg transition-colors focus:outline-none focus:ring-2 focus:ring-primary"
 						aria-label="Open settings"
 					>
-						<Settings className="w-6 h-6" />
+						<Settings className="w-6 h-6" aria-hidden="true" />
 					</button>
 				</header>
 
 				<div className="flex flex-col lg:flex-row gap-8">
 					{/* Sidebar - Tasks */}
-					<aside className="w-full lg:w-80 xl:w-96 flex-shrink-0 order-2 lg:order-1">
-						<div className="bg-slate-900 rounded-2xl p-6 space-y-6">
-							<div>
-								<h2 className="text-lg font-semibold text-white mb-4">
+					<aside
+						className="w-full lg:w-80 xl:w-96 flex-shrink-0 order-2 lg:order-1"
+						aria-label="Task Management"
+					>
+						<div className="bg-theme-bg-secondary rounded-2xl p-6 space-y-6">
+							{/* Tabs */}
+							<div
+								className="flex gap-2"
+								role="tablist"
+								aria-label="Sidebar sections"
+							>
+								<button
+									type="button"
+									role="tab"
+									aria-selected={activeTab === "addTask"}
+									aria-controls="tab-panel-addTask"
+									onClick={() => setActiveTab("addTask")}
+									className={`flex-1 flex items-center justify-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-colors focus:outline-none focus:ring-2 focus:ring-primary ${
+										activeTab === "addTask"
+											? "bg-primary text-primary-foreground"
+											: "text-theme-text-secondary hover:text-theme-text hover:bg-theme-bg-tertiary"
+									}`}
+								>
+									<ListPlus className="w-4 h-4" aria-hidden="true" />
 									Add Task
-								</h2>
-								<TaskForm />
+								</button>
+								{isGitHubConnected && (
+									<button
+										type="button"
+										role="tab"
+										aria-selected={activeTab === "github"}
+										aria-controls="tab-panel-github"
+										onClick={() => setActiveTab("github")}
+										className={`flex-1 flex items-center justify-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-colors focus:outline-none focus:ring-2 focus:ring-primary ${
+											activeTab === "github"
+												? "bg-primary text-primary-foreground"
+												: "text-theme-text-secondary hover:text-theme-text hover:bg-theme-bg-tertiary"
+										}`}
+									>
+										<Github className="w-4 h-4" aria-hidden="true" />
+										GitHub
+									</button>
+								)}
 							</div>
 
-							<div className="border-t border-slate-800 pt-6">
-								<h2 className="text-lg font-semibold text-white mb-4">Tasks</h2>
+							{/* Tab Content */}
+							{activeTab === "addTask" && (
+								<section
+									id="tab-panel-addTask"
+									role="tabpanel"
+									aria-labelledby="add-task-heading"
+								>
+									<h2 id="add-task-heading" className="sr-only">
+										Add Task
+									</h2>
+									<TaskForm />
+								</section>
+							)}
+
+							{activeTab === "github" && isGitHubConnected && (
+								<section
+									id="tab-panel-github"
+									role="tabpanel"
+									aria-labelledby="github-issues-heading"
+								>
+									<h2 id="github-issues-heading" className="sr-only">
+										GitHub Issues
+									</h2>
+									<Suspense
+										fallback={
+											<div className="p-4 text-center">Loading issues...</div>
+										}
+									>
+										<GitHubIssueList />
+									</Suspense>
+								</section>
+							)}
+
+							{/* Tasks List - Always visible */}
+							<section
+								className="border-t border-theme-border pt-6"
+								aria-labelledby="tasks-list-heading"
+							>
+								<h2
+									id="tasks-list-heading"
+									className="text-lg font-semibold text-theme-text mb-4"
+								>
+									Tasks
+								</h2>
 								<TaskList
-									onSelectTask={selectTask}
+									onSelectTask={handleSelectTask}
 									selectedTaskId={selectedTask?.id}
 								/>
-							</div>
+							</section>
 						</div>
 					</aside>
 
 					{/* Main - Timer */}
-					<main className="flex-1 flex items-start justify-center order-1 lg:order-2">
-						<div className="sticky top-8">
+					<main
+						id="main-timer"
+						className="flex-1 flex flex-col items-center gap-6 order-1 lg:order-2"
+					>
+						<div className="sticky top-8 flex flex-col items-center gap-6 w-full">
 							<Timer />
+							<SoundMixer />
 						</div>
 					</main>
 				</div>
 			</div>
 
-			<SettingsModal
-				isOpen={isSettingsOpen}
-				onClose={() => setIsSettingsOpen(false)}
-			/>
+			<Suspense fallback={null}>
+				<SettingsModal
+					isOpen={isSettingsOpen}
+					onClose={() => setIsSettingsOpen(false)}
+				/>
+			</Suspense>
 		</div>
 	);
 }
 
 function App() {
 	return (
-		<SettingsProvider>
-			<ThemeProvider>
-				<TaskProvider>
-					<AppContent />
-				</TaskProvider>
-			</ThemeProvider>
-		</SettingsProvider>
+		<AppProviders>
+			<AppContent />
+		</AppProviders>
 	);
 }
 
