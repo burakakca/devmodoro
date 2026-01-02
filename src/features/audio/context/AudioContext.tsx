@@ -19,7 +19,9 @@ interface AudioContextValue {
 	/** Current mix state */
 	mixState: SoundMixState;
 	/** Play the alarm sound with optional repeat count */
-	playAlarm: (repeatCount?: number) => void;
+	playAlarm: (repeatCount?: number) => Promise<void>;
+	/** Play the focus start sound */
+	playFocus: () => Promise<void>;
 	/** Start the ticking sound (respects tickingEnabled setting) */
 	startTicking: () => void;
 	/** Stop the ticking sound */
@@ -34,11 +36,13 @@ interface AudioContextValue {
 		targetVolume: number,
 		duration?: number,
 	) => void;
+	/** Play countdown tick for last 10 seconds */
+	playCountdownTick: (secondsRemaining: number) => Promise<void>;
 }
 
 const AudioContext = createContext<AudioContextValue | null>(null);
 
-export function AudioProvider({ children }: { children: ReactNode }) {
+export const AudioProvider = ({ children }: { children: ReactNode }) => {
 	const { settings } = useSettings();
 	const [isReady, setIsReady] = useState(false);
 	const [mixState, setMixState] = useState<SoundMixState>(() =>
@@ -58,8 +62,14 @@ export function AudioProvider({ children }: { children: ReactNode }) {
 			});
 
 		// Resume audio on user interaction
-		const resumeAudio = () => {
-			audioManager.resumeContexts();
+		const resumeAudio = async () => {
+			const unlocked = await audioManager.resumeContexts();
+			if (unlocked) {
+				// Once unlocked, we can remove the listeners
+				document.removeEventListener("click", resumeAudio);
+				document.removeEventListener("keydown", resumeAudio);
+				document.removeEventListener("touchstart", resumeAudio);
+			}
 		};
 
 		document.addEventListener("click", resumeAudio);
@@ -84,12 +94,17 @@ export function AudioProvider({ children }: { children: ReactNode }) {
 	}, [isReady, settings.sound]);
 
 	const playAlarm = useCallback(
-		(repeatCount?: number) => {
+		async (repeatCount?: number) => {
 			if (!isReady) return;
-			audioManager.playAlarm(repeatCount ?? settings.sound.alarmRepeat);
+			await audioManager.playAlarm(repeatCount ?? settings.sound.alarmRepeat);
 		},
 		[isReady, settings.sound.alarmRepeat],
 	);
+
+	const playFocus = useCallback(async () => {
+		if (!isReady) return;
+		await audioManager.playFocus();
+	}, [isReady]);
 
 	const startTicking = useCallback(() => {
 		if (!isReady) return;
@@ -125,28 +140,38 @@ export function AudioProvider({ children }: { children: ReactNode }) {
 		[isReady],
 	);
 
+	const playCountdownTick = useCallback(
+		async (secondsRemaining: number) => {
+			if (!isReady) return;
+			await audioManager.playCountdownTick(secondsRemaining);
+		},
+		[isReady],
+	);
+
 	return (
 		<AudioContext.Provider
 			value={{
 				isReady,
 				mixState,
 				playAlarm,
+				playFocus,
 				startTicking,
 				stopTicking,
 				stopAll,
 				setAmbientVolume,
 				fadeAmbient,
+				playCountdownTick,
 			}}
 		>
 			{children}
 		</AudioContext.Provider>
 	);
-}
+};
 
-export function useAudio() {
+export const useAudio = () => {
 	const context = useContext(AudioContext);
 	if (!context) {
 		throw new Error("useAudio must be used within an AudioProvider");
 	}
 	return context;
-}
+};

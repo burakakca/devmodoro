@@ -15,7 +15,7 @@ interface ThemeContextValue {
 
 const ThemeContext = createContext<ThemeContextValue | null>(null);
 
-export function ThemeProvider({ children }: { children: ReactNode }) {
+export const ThemeProvider = ({ children }: { children: ReactNode }) => {
 	const { settings } = useSettings();
 	const [isTimerRunning, setIsTimerRunning] = useState(false);
 
@@ -37,12 +37,12 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
 			{children}
 		</ThemeContext.Provider>
 	);
-}
+};
 
-export function useThemeContext() {
+export const useThemeContext = () => {
 	const context = useContext(ThemeContext);
 	if (!context) {
 		throw new Error("useThemeContext must be used within a ThemeProvider");
 	}
 	return context;
-}
+};

@@ -19,7 +19,7 @@ interface AppProvidersProps {
 	children: ReactNode;
 }
 
-export function AppProviders({ children }: AppProvidersProps) {
+export const AppProviders = ({ children }: AppProvidersProps) => {
 	return (
 		<QueryClientProvider client={queryClient}>
 			<SettingsProvider>
@@ -32,4 +32,4 @@ export function AppProviders({ children }: AppProvidersProps) {
 			<ReactQueryDevtools initialIsOpen={false} />
 		</QueryClientProvider>
 	);
-}
+};

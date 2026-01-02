@@ -1,13 +1,17 @@
+import { useLiveQuery } from "dexie-react-hooks";
 import { Plus } from "lucide-react";
 import { useState } from "react";
+import { db } from "@/db/db";
 import { createTask } from "@/features/tasks/services/taskService";
 
-export function TaskForm() {
+export const TaskForm = () => {
 	const [title, setTitle] = useState("");
 	const [estimatedPomos, setEstimatedPomos] = useState(1);
 	const [externalLink, setExternalLink] = useState("");
 	const [isSubmitting, setIsSubmitting] = useState(false);
 	const [error, setError] = useState<string | null>(null);
+
+	const existingTasks = useLiveQuery(() => db.tasks.toArray());
 
 	const handleSubmit = async (e: React.FormEvent) => {
 		e.preventDefault();
@@ -26,10 +30,22 @@ export function TaskForm() {
 		setIsSubmitting(true);
 
 		try {
+			const link = externalLink.trim();
+			let displayTitle = title.trim();
+
+			if (link && existingTasks) {
+				const count = existingTasks.filter(
+					(t) => t.externalLink === link,
+				).length;
+				if (count > 0) {
+					displayTitle = `${displayTitle} (${count + 1})`;
+				}
+			}
+
 			await createTask({
-				title: title.trim(),
+				title: displayTitle,
 				estimatedPomos,
-				externalLink: externalLink.trim() || undefined,
+				externalLink: link || undefined,
 				status: "todo",
 			});
 
@@ -123,4 +139,4 @@ export function TaskForm() {
 			</button>
 		</form>
 	);
-}
+};

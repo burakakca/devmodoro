@@ -1,16 +1,15 @@
 import { Github, ListPlus, Settings } from "lucide-react";
 import { lazy, Suspense, useState } from "react";
-import { SoundMixer } from "@/features/audio/components/SoundMixer";
+import { TabButton } from "@/components/ui/TabButton";
 import { useSettings } from "@/features/settings/context/SettingsContext";
 import { useThemeContext } from "@/features/settings/context/ThemeContext";
-import { TaskForm } from "@/features/tasks/components/TaskForm";
 import { TaskList } from "@/features/tasks/components/TaskList";
 import { useSelectedTask } from "@/features/tasks/context/TaskContext";
 import { Timer } from "@/features/timer/components/Timer";
 import type { Task } from "@/types";
 import { AppProviders } from "./AppProviders";
 
-// Lazy load heavy components
+// Lazy load heavy/conditional components
 const GitHubIssueList = lazy(() =>
 	import("@/features/github/components/GitHubIssueList").then((module) => ({
 		default: module.GitHubIssueList,
@@ -21,10 +20,20 @@ const SettingsModal = lazy(() =>
 		default: module.SettingsModal,
 	})),
 );
+const SoundMixer = lazy(() =>
+	import("@/features/audio/components/SoundMixer").then((module) => ({
+		default: module.SoundMixer,
+	})),
+);
+const TaskForm = lazy(() =>
+	import("@/features/tasks/components/TaskForm").then((module) => ({
+		default: module.TaskForm,
+	})),
+);
 
 type SidebarTab = "addTask" | "github";
 
-function AppContent() {
+const AppContent = () => {
 	const { selectTask, selectedTask } = useSelectedTask();
 	const { settings } = useSettings();
 	const { isTimerRunning } = useThemeContext();
@@ -86,37 +95,23 @@ function AppContent() {
 								role="tablist"
 								aria-label="Sidebar sections"
 							>
-								<button
-									type="button"
-									role="tab"
-									aria-selected={activeTab === "addTask"}
-									aria-controls="tab-panel-addTask"
+								<TabButton
+									isSelected={activeTab === "addTask"}
 									onClick={() => setActiveTab("addTask")}
-									className={`flex-1 flex items-center justify-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-colors focus:outline-none focus:ring-2 focus:ring-primary ${
-										activeTab === "addTask"
-											? "bg-primary text-primary-foreground"
-											: "text-theme-text-secondary hover:text-theme-text hover:bg-theme-bg-tertiary"
-									}`}
+									controls="tab-panel-addTask"
+									icon={<ListPlus className="w-4 h-4" aria-hidden="true" />}
 								>
-									<ListPlus className="w-4 h-4" aria-hidden="true" />
 									Add Task
-								</button>
+								</TabButton>
 								{isGitHubConnected && (
-									<button
-										type="button"
-										role="tab"
-										aria-selected={activeTab === "github"}
-										aria-controls="tab-panel-github"
+									<TabButton
+										isSelected={activeTab === "github"}
 										onClick={() => setActiveTab("github")}
-										className={`flex-1 flex items-center justify-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-colors focus:outline-none focus:ring-2 focus:ring-primary ${
-											activeTab === "github"
-												? "bg-primary text-primary-foreground"
-												: "text-theme-text-secondary hover:text-theme-text hover:bg-theme-bg-tertiary"
-										}`}
+										controls="tab-panel-github"
+										icon={<Github className="w-4 h-4" aria-hidden="true" />}
 									>
-										<Github className="w-4 h-4" aria-hidden="true" />
 										GitHub
-									</button>
+									</TabButton>
 								)}
 							</div>
 
@@ -130,7 +125,16 @@ function AppContent() {
 									<h2 id="add-task-heading" className="sr-only">
 										Add Task
 									</h2>
-									<TaskForm />
+									<Suspense
+										fallback={
+											<div className="space-y-4 animate-pulse">
+												<div className="h-10 bg-theme-bg-tertiary rounded-lg" />
+												<div className="h-10 bg-theme-bg-tertiary rounded-lg" />
+											</div>
+										}
+									>
+										<TaskForm />
+									</Suspense>
 								</section>
 							)}
 
@@ -179,7 +183,13 @@ function AppContent() {
 					>
 						<div className="sticky top-8 flex flex-col items-center gap-6 w-full">
 							<Timer />
-							<SoundMixer />
+							<Suspense
+								fallback={
+									<div className="w-full max-w-md mx-auto h-32 bg-theme-bg-secondary/80 rounded-2xl animate-pulse" />
+								}
+							>
+								<SoundMixer />
+							</Suspense>
 						</div>
 					</main>
 				</div>
@@ -193,14 +203,14 @@ function AppContent() {
 			</Suspense>
 		</div>
 	);
-}
+};
 
-function App() {
+const App = () => {
 	return (
 		<AppProviders>
 			<AppContent />
 		</AppProviders>
 	);
-}
+};
 
-export default App;
+export { App };

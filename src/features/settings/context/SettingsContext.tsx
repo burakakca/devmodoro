@@ -25,7 +25,7 @@ interface SettingsContextValue {
 
 const SettingsContext = createContext<SettingsContextValue | null>(null);
 
-export function SettingsProvider({ children }: { children: ReactNode }) {
+export const SettingsProvider = ({ children }: { children: ReactNode }) => {
 	const [isInitialized, setIsInitialized] = useState(false);
 
 	// Initialize settings on first load
@@ -83,12 +83,12 @@ export function SettingsProvider({ children }: { children: ReactNode }) {
 			{children}
 		</SettingsContext.Provider>
 	);
-}
+};
 
-export function useSettings() {
+export const useSettings = () => {
 	const context = useContext(SettingsContext);
 	if (!context) {
 		throw new Error("useSettings must be used within a SettingsProvider");
 	}
 	return context;
-}
+};

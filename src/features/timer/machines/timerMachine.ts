@@ -56,26 +56,34 @@ export const timerMachine = setup({
 		mode: "focus",
 		completedPomos: 0,
 	}),
+	on: {
+		SET_COMPLETED_POMOS: {
+			actions: "setCompletedPomos",
+		},
+		SET_MODE: {
+			target: ".idle",
+			actions: assign({
+				mode: ({ event }) => event.mode,
+				duration: ({ event }) => event.duration,
+				timeLeft: ({ event }) => event.duration,
+			}),
+		},
+		SET_DURATION: {
+			target: ".idle",
+			actions: assign({
+				duration: ({ event }) => event.duration,
+				timeLeft: ({ event }) => event.duration,
+			}),
+		},
+		RESET: {
+			target: ".idle",
+			actions: "resetTime",
+		},
+	},
 	states: {
 		idle: {
 			on: {
 				START: "running",
-				SET_DURATION: {
-					actions: assign({
-						duration: ({ event }) => event.duration,
-						timeLeft: ({ event }) => event.duration,
-					}),
-				},
-				SET_MODE: {
-					actions: assign({
-						mode: ({ event }) => event.mode,
-						duration: ({ event }) => event.duration,
-						timeLeft: ({ event }) => event.duration,
-					}),
-				},
-				SET_COMPLETED_POMOS: {
-					actions: "setCompletedPomos",
-				},
 			},
 		},
 		running: {
@@ -84,10 +92,6 @@ export const timerMachine = setup({
 				TICK: {
 					actions: "tick",
 					target: "checkingFinished",
-				},
-				RESET: {
-					target: "idle",
-					actions: "resetTime",
 				},
 				SKIP: "completed",
 			},
@@ -104,24 +108,12 @@ export const timerMachine = setup({
 		paused: {
 			on: {
 				RESUME: "running",
-				RESET: {
-					target: "idle",
-					actions: "resetTime",
-				},
 			},
 		},
 		completed: {
 			entry: "incrementPomos",
 			on: {
-				RESET: "idle",
-				SET_MODE: {
-					target: "idle",
-					actions: assign({
-						mode: ({ event }) => event.mode,
-						duration: ({ event }) => event.duration,
-						timeLeft: ({ event }) => event.duration,
-					}),
-				},
+				START: "idle",
 			},
 		},
 	},

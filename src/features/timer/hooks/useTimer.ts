@@ -9,12 +9,12 @@ interface UseTimerOptions {
 	onPomosChange?: (count: number) => void;
 }
 
-export function useTimer({
+export const useTimer = ({
 	focusDuration,
 	initialCompletedPomos = 0,
 	onSessionComplete,
 	onPomosChange,
-}: UseTimerOptions) {
+}: UseTimerOptions) => {
 	const workerRef = useRef<Worker | null>(null);
 	const sessionStartRef = useRef<number | null>(null);
 	const prevCompletedPomosRef = useRef<number>(initialCompletedPomos);
@@ -92,4 +92,4 @@ export function useTimer({
 	}, [state.status, isRunning]);
 
 	return { state, send };
-}
+};

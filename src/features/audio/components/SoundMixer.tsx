@@ -34,7 +34,7 @@ const TRACK_CONFIG: {
 	{ id: "coffee", label: "Coffee Shop", icon: Coffee, color: "bg-coffee" },
 ];
 
-export function SoundMixer() {
+export const SoundMixer = () => {
 	const { settings, updateSettings } = useSettings();
 	const { sound } = settings;
 	const [isMuted, setIsMuted] = useState(false);
@@ -239,4 +239,4 @@ export function SoundMixer() {
 			</fieldset>
 		</section>
 	);
-}
+};

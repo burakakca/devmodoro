@@ -4,7 +4,6 @@ import {
 	type ReactNode,
 	useCallback,
 	useContext,
-	useEffect,
 	useState,
 } from "react";
 import { db } from "@/db/db";
@@ -18,7 +17,7 @@ interface TaskContextValue {
 
 const TaskContext = createContext<TaskContextValue | null>(null);
 
-export function TaskProvider({ children }: { children: ReactNode }) {
+export const TaskProvider = ({ children }: { children: ReactNode }) => {
 	const [selectedTaskId, setSelectedTaskId] = useState<string | null>(() => {
 		try {
 			return localStorage.getItem("devmodoro-selected-task-id");
@@ -55,13 +54,6 @@ export function TaskProvider({ children }: { children: ReactNode }) {
 		}
 	}, []);
 
-	// Auto-clear selected task if it becomes done
-	useEffect(() => {
-		if (selectedTask?.status === "done") {
-			clearSelectedTask();
-		}
-	}, [selectedTask?.status, clearSelectedTask]);
-
 	return (
 		<TaskContext.Provider
 			value={{
@@ -73,12 +65,12 @@ export function TaskProvider({ children }: { children: ReactNode }) {
 			{children}
 		</TaskContext.Provider>
 	);
-}
+};
 
-export function useSelectedTask() {
+export const useSelectedTask = () => {
 	const context = useContext(TaskContext);
 	if (!context) {
 		throw new Error("useSelectedTask must be used within a TaskProvider");
 	}
 	return context;
-}
+};

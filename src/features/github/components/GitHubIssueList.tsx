@@ -1,8 +1,4 @@
-import {
-	useInfiniteQuery,
-	useMutation,
-	useQueryClient,
-} from "@tanstack/react-query";
+import { useInfiniteQuery, useMutation } from "@tanstack/react-query";
 import { useLiveQuery } from "dexie-react-hooks";
 import { AnimatePresence, motion } from "framer-motion";
 import {
@@ -22,6 +18,7 @@ import { useReducedMotion } from "@/components/ui/AnimatedContainer";
 import { db } from "@/db/db";
 import {
 	type GitHubIssue,
+	type GitHubIssuesResult,
 	getAssignedIssues,
 	getLabelTextColor,
 } from "@/features/github/services/githubService";
@@ -35,7 +32,7 @@ interface GitHubIssueListProps {
 function RepoGroup({
 	repoName,
 	issues,
-	importedUrls,
+	issueUrlCounts,
 	importingIssueId,
 	processingIds,
 	estimate,
@@ -46,7 +43,7 @@ function RepoGroup({
 }: {
 	repoName: string;
 	issues: GitHubIssue[];
-	importedUrls: Set<string>;
+	issueUrlCounts: Map<string, number>;
 	importingIssueId: number | null;
 	processingIds: Set<number>;
 	estimate: number;
@@ -88,7 +85,7 @@ function RepoGroup({
 							{issues.map((issue) => {
 								const isImporting = importingIssueId === issue.id;
 								const isProcessing = processingIds.has(issue.id);
-								const isImported = importedUrls.has(issue.html_url);
+								const count = issueUrlCounts.get(issue.html_url) || 0;
 
 								return (
 									<li key={issue.id}>
@@ -106,6 +103,11 @@ function RepoGroup({
 															#{issue.number}
 														</span>{" "}
 														{issue.title}
+														{count > 0 && (
+															<span className="ml-2 text-[10px] px-1.5 py-0.5 bg-primary/20 text-primary rounded-full font-bold">
+																{count}
+															</span>
+														)}
 													</h4>
 
 													{issue.labels.length > 0 && (
@@ -127,11 +129,7 @@ function RepoGroup({
 												</div>
 
 												<div className="flex items-center gap-1 flex-shrink-0">
-													{isImported ? (
-														<span className="p-1.5 text-success">
-															<Check className="w-4 h-4" />
-														</span>
-													) : isImporting ? (
+													{isImporting ? (
 														<div className="flex items-center gap-1 bg-theme-bg-secondary p-1 rounded-lg shadow-lg border border-theme-border absolute right-2 top-2 z-10">
 															<input
 																type="number"
@@ -157,7 +155,9 @@ function RepoGroup({
 															</button>
 															<button
 																type="button"
-																onClick={cancelImport}
+																onClick={() => {
+																	cancelImport();
+																}}
 																className="p-1 text-red-500 hover:bg-red-500/10 rounded"
 															>
 																<X className="w-3.5 h-3.5" />
@@ -202,7 +202,6 @@ function RepoGroup({
 }
 
 export function GitHubIssueList({ onIssueImported }: GitHubIssueListProps) {
-	const queryClient = useQueryClient();
 	const { settings } = useSettings();
 	const { github } = settings.integration;
 
@@ -220,9 +219,16 @@ export function GitHubIssueList({ onIssueImported }: GitHubIssueListProps) {
 		isFetchingNextPage,
 		isLoading,
 		refetch,
-	} = useInfiniteQuery({
+	} = useInfiniteQuery<
+		GitHubIssuesResult,
+		Error,
+		{ pages: GitHubIssuesResult[] },
+		string[],
+		number
+	>({
 		queryKey: ["github-issues", github.token],
-		queryFn: ({ pageParam = 1 }) => getAssignedIssues(github.token, pageParam),
+		queryFn: ({ pageParam }) => getAssignedIssues(github.token, pageParam),
+		initialPageParam: 1,
 		getNextPageParam: (lastPage, allPages) => {
 			return lastPage.hasMore ? allPages.length + 1 : undefined;
 		},
@@ -238,8 +244,14 @@ export function GitHubIssueList({ onIssueImported }: GitHubIssueListProps) {
 			issue: GitHubIssue;
 			estimatedPomos: number;
 		}) => {
+			const count = issueUrlCounts.get(issue.html_url) || 0;
+			const displayTitle =
+				count > 0
+					? `#${issue.number} ${issue.title} (${count + 1})`
+					: `#${issue.number} ${issue.title}`;
+
 			return createTask({
-				title: `#${issue.number} ${issue.title}`,
+				title: displayTitle,
 				estimatedPomos,
 				externalLink: issue.html_url,
 				status: "todo",
@@ -277,14 +289,16 @@ export function GitHubIssueList({ onIssueImported }: GitHubIssueListProps) {
 		return groups;
 	}, [allIssues, searchQuery]);
 
-	// Get existing tasks to prevent duplicates (still using live query for local DB reactivity)
+	// Get existing tasks to count occurrences per URL
 	const existingTasks = useLiveQuery(() => db.tasks.toArray());
-	const importedUrls = useMemo(() => {
-		const urls = new Set<string>();
+	const issueUrlCounts = useMemo(() => {
+		const counts = new Map<string, number>();
 		existingTasks?.forEach((task) => {
-			if (task.externalLink) urls.add(task.externalLink);
+			if (task.externalLink) {
+				counts.set(task.externalLink, (counts.get(task.externalLink) || 0) + 1);
+			}
 		});
-		return urls;
+		return counts;
 	}, [existingTasks]);
 
 	const processingIds = useMemo(() => {
@@ -390,7 +404,7 @@ export function GitHubIssueList({ onIssueImported }: GitHubIssueListProps) {
 						key={repoName}
 						repoName={repoName}
 						issues={issues}
-						importedUrls={importedUrls}
+						issueUrlCounts={issueUrlCounts}
 						importingIssueId={importingIssueId}
 						processingIds={processingIds}
 						estimate={estimate}

@@ -11,7 +11,7 @@ interface BreakSuggestionModalProps {
 	shortBreakDuration: number;
 }
 
-export function BreakSuggestionModal({
+export const BreakSuggestionModal = ({
 	isOpen,
 	onClose,
 	onTakeLongBreak,
@@ -19,7 +19,7 @@ export function BreakSuggestionModal({
 	onContinueWorking,
 	longBreakDuration,
 	shortBreakDuration,
-}: BreakSuggestionModalProps) {
+}: BreakSuggestionModalProps) => {
 	const handleKeyDown = useCallback(
 		(e: KeyboardEvent) => {
 			if (e.key === "Escape") {
@@ -102,4 +102,4 @@ export function BreakSuggestionModal({
 			</div>
 		</div>
 	);
-}
+};

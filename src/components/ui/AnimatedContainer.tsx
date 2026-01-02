@@ -4,10 +4,10 @@ import { type ReactNode, useEffect, useState } from "react";
 /**
  * Hook to check if user prefers reduced motion
  */
-export function useReducedMotion(): boolean {
+export const useReducedMotion = (): boolean => {
 	if (typeof window === "undefined") return false;
 	return window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-}
+};
 
 /**
  * Animation presets that respect reduced motion preferences
@@ -70,13 +70,13 @@ interface AnimatedContainerProps {
 /**
  * Reusable animated container wrapper
  */
-export function AnimatedContainer({
+export const AnimatedContainer = ({
 	children,
 	animation = "fadeIn",
 	delay = 0,
 	duration = 0.3,
 	className,
-}: AnimatedContainerProps) {
+}: AnimatedContainerProps) => {
 	const reducedMotion = useReducedMotion();
 	const preset = animations[animation];
 
@@ -100,7 +100,7 @@ export function AnimatedContainer({
 			{children}
 		</motion.div>
 	);
-}
+};
 
 /**
  * Staggered list animation variants for parent container
@@ -145,7 +145,7 @@ interface AnimatedListProps {
 /**
  * Container for staggered list animations
  */
-export function AnimatedList({ children, className }: AnimatedListProps) {
+export const AnimatedList = ({ children, className }: AnimatedListProps) => {
 	const reducedMotion = useReducedMotion();
 
 	if (reducedMotion) {
@@ -162,7 +162,7 @@ export function AnimatedList({ children, className }: AnimatedListProps) {
 			{children}
 		</motion.div>
 	);
-}
+};
 
 interface AnimatedListItemProps {
 	children: ReactNode;
@@ -173,11 +173,11 @@ interface AnimatedListItemProps {
 /**
  * Individual item in a staggered list
  */
-export function AnimatedListItem({
+export const AnimatedListItem = ({
 	children,
 	className,
 	layoutId,
-}: AnimatedListItemProps) {
+}: AnimatedListItemProps) => {
 	const reducedMotion = useReducedMotion();
 
 	if (reducedMotion) {
@@ -194,7 +194,7 @@ export function AnimatedListItem({
 			{children}
 		</motion.div>
 	);
-}
+};
 
 interface AnimatedButtonProps {
 	children: ReactNode;
@@ -208,14 +208,14 @@ interface AnimatedButtonProps {
 /**
  * Animated button with hover and tap effects
  */
-export function AnimatedButton({
+export const AnimatedButton = ({
 	children,
 	className,
 	onClick,
 	disabled,
 	type = "button",
 	"aria-label": ariaLabel,
-}: AnimatedButtonProps) {
+}: AnimatedButtonProps) => {
 	const reducedMotion = useReducedMotion();
 
 	if (reducedMotion) {
@@ -246,7 +246,7 @@ export function AnimatedButton({
 			{children}
 		</motion.button>
 	);
-}
+};
 
 /**
  * Celebration animation for task/pomodoro completion
@@ -256,7 +256,7 @@ interface CelebrationProps {
 	onComplete?: () => void;
 }
 
-export function Celebration({ show, onComplete }: CelebrationProps) {
+export const Celebration = ({ show, onComplete }: CelebrationProps) => {
 	const reducedMotion = useReducedMotion();
 	const [isVisible, setIsVisible] = useState(false);
 
@@ -344,7 +344,7 @@ export function Celebration({ show, onComplete }: CelebrationProps) {
 			)}
 		</AnimatePresence>
 	);
-}
+};
 
 // Re-export AnimatePresence for convenience
 export { AnimatePresence };

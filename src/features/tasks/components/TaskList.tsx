@@ -28,7 +28,7 @@ const STATUS_CONFIG: Record<
 	done: { label: "Done", icon: CheckCircle2, color: "text-success" },
 };
 
-function TaskGroup({
+const TaskGroup = ({
 	status,
 	tasks,
 	selectedTaskId,
@@ -40,7 +40,7 @@ function TaskGroup({
 	selectedTaskId?: string;
 	onSelectTask?: (task: Task) => void;
 	defaultExpanded?: boolean;
-}) {
+}) => {
 	const [isExpanded, setIsExpanded] = useState(defaultExpanded);
 	const config = STATUS_CONFIG[status];
 	const reducedMotion = useReducedMotion();
@@ -105,9 +105,9 @@ function TaskGroup({
 			</AnimatePresence>
 		</div>
 	);
-}
+};
 
-export function TaskList({ onSelectTask, selectedTaskId }: TaskListProps) {
+export const TaskList = ({ onSelectTask, selectedTaskId }: TaskListProps) => {
 	const tasks = useLiveQuery(() =>
 		db.tasks.orderBy("createdAt").reverse().toArray(),
 	);
@@ -160,4 +160,4 @@ export function TaskList({ onSelectTask, selectedTaskId }: TaskListProps) {
 			/>
 		</div>
 	);
-}
+};

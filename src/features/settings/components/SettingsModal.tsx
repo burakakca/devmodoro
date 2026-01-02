@@ -37,7 +37,7 @@ const TABS: { id: SettingsTab; label: string; icon: typeof Clock }[] = [
 	{ id: "integration", label: "Integration", icon: Webhook },
 ];
 
-export function SettingsModal({ isOpen, onClose }: SettingsModalProps) {
+export const SettingsModal = ({ isOpen, onClose }: SettingsModalProps) => {
 	const [activeTab, setActiveTab] = useState<SettingsTab>("timer");
 
 	// Close on Escape key
@@ -163,4 +163,4 @@ export function SettingsModal({ isOpen, onClose }: SettingsModalProps) {
 			</div>
 		</div>
 	);
-}
+};
