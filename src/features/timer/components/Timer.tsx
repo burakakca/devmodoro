@@ -345,7 +345,10 @@ export function Timer() {
 			return;
 		}
 
-		if (mode === "focus" && selectedTask) {
+		if (mode === "focus") {
+			if (!selectedTask) {
+				return;
+			}
 			if (selectedTask.status === "todo") {
 				await updateTask(selectedTask.id, { status: "in-progress" });
 			}
@@ -515,55 +518,78 @@ export function Timer() {
 			</div>
 
 			{/* Controls */}
-			<div className="flex gap-4">
-				{isIdle || isPaused || isCompleted ? (
+			<div className="flex flex-col items-center gap-4">
+				<div className="flex gap-4">
+					{isIdle || isPaused || isCompleted ? (
+						<motion.button
+							type="button"
+							onClick={handlePlay}
+							disabled={mode === "focus" && !selectedTask}
+							className="p-4 rounded-full transition-colors shadow-lg shadow-primary/20 bg-primary hover:bg-primary-hover focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed disabled:grayscale"
+							aria-label={
+								mode === "focus" && !selectedTask
+									? "Select a task to start"
+									: isPaused
+										? "Resume timer"
+										: "Start timer"
+							}
+							whileHover={
+								reducedMotion || (mode === "focus" && !selectedTask)
+									? undefined
+									: { scale: 1.1 }
+							}
+							whileTap={
+								reducedMotion || (mode === "focus" && !selectedTask)
+									? undefined
+									: { scale: 0.95 }
+							}
+						>
+							<Play
+								className="w-8 h-8 fill-current text-primary-foreground"
+								aria-hidden="true"
+							/>
+						</motion.button>
+					) : (
+						<motion.button
+							type="button"
+							onClick={() => send({ type: "PAUSE" })}
+							className="p-4 bg-theme-bg-tertiary hover:opacity-80 rounded-full transition-colors shadow-lg text-theme-text focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2"
+							aria-label="Pause timer"
+							whileHover={reducedMotion ? undefined : { scale: 1.1 }}
+							whileTap={reducedMotion ? undefined : { scale: 0.95 }}
+						>
+							<Pause className="w-8 h-8 fill-current" aria-hidden="true" />
+						</motion.button>
+					)}
+
 					<motion.button
 						type="button"
-						onClick={handlePlay}
-						className="p-4 rounded-full transition-colors shadow-lg shadow-primary/20 bg-primary hover:bg-primary-hover focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2"
-						aria-label={isPaused ? "Resume timer" : "Start timer"}
+						onClick={() => send({ type: "RESET" })}
+						className="p-4 bg-theme-bg-tertiary hover:opacity-80 rounded-full transition-colors text-theme-text focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2"
+						aria-label="Reset timer"
 						whileHover={reducedMotion ? undefined : { scale: 1.1 }}
 						whileTap={reducedMotion ? undefined : { scale: 0.95 }}
 					>
-						<Play
-							className="w-8 h-8 fill-current text-primary-foreground"
-							aria-hidden="true"
-						/>
+						<RotateCcw className="w-8 h-8" aria-hidden="true" />
 					</motion.button>
-				) : (
+
 					<motion.button
 						type="button"
-						onClick={() => send({ type: "PAUSE" })}
-						className="p-4 bg-theme-bg-tertiary hover:opacity-80 rounded-full transition-colors shadow-lg text-theme-text focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2"
-						aria-label="Pause timer"
+						onClick={() => send({ type: "SKIP" })}
+						className="p-4 bg-theme-bg-tertiary hover:opacity-80 rounded-full transition-colors text-theme-text focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2"
+						aria-label="Skip session"
 						whileHover={reducedMotion ? undefined : { scale: 1.1 }}
 						whileTap={reducedMotion ? undefined : { scale: 0.95 }}
 					>
-						<Pause className="w-8 h-8 fill-current" aria-hidden="true" />
+						<SkipForward className="w-8 h-8" aria-hidden="true" />
 					</motion.button>
+				</div>
+
+				{mode === "focus" && !selectedTask && (
+					<p className="text-xs text-primary font-medium animate-pulse">
+						Select a task to start focusing
+					</p>
 				)}
-
-				<motion.button
-					type="button"
-					onClick={() => send({ type: "RESET" })}
-					className="p-4 bg-theme-bg-tertiary hover:opacity-80 rounded-full transition-colors text-theme-text focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2"
-					aria-label="Reset timer"
-					whileHover={reducedMotion ? undefined : { scale: 1.1 }}
-					whileTap={reducedMotion ? undefined : { scale: 0.95 }}
-				>
-					<RotateCcw className="w-8 h-8" aria-hidden="true" />
-				</motion.button>
-
-				<motion.button
-					type="button"
-					onClick={() => send({ type: "SKIP" })}
-					className="p-4 bg-theme-bg-tertiary hover:opacity-80 rounded-full transition-colors text-theme-text focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2"
-					aria-label="Skip session"
-					whileHover={reducedMotion ? undefined : { scale: 1.1 }}
-					whileTap={reducedMotion ? undefined : { scale: 0.95 }}
-				>
-					<SkipForward className="w-8 h-8" aria-hidden="true" />
-				</motion.button>
 			</div>
 
 			{/* Stats */}
