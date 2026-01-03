@@ -1,7 +1,7 @@
 import { Download, FileJson, FileSpreadsheet } from "lucide-react";
 import { memo, useState } from "react";
-import { getSessionsWithTasks } from "../services/analyticsService";
 import { type ExportFormat, exportSessions } from "../services/exportService";
+import { getSessionsWithTasks } from "../services/generalAnalyticsService";
 
 export const ExportButton = memo(() => {
 	const [isOpen, setIsOpen] = useState(false);

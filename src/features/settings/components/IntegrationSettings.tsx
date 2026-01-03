@@ -14,7 +14,7 @@ import {
 	createGitHubSettings,
 	maskToken,
 	validateGitHubToken,
-} from "@/features/github/services/githubService";
+} from "@/features/github/services/githubAuthService";
 import { useSettings } from "@/features/settings/context/SettingsContext";
 import { ToggleRow } from "./ToggleRow";
 

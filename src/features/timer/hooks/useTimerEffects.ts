@@ -4,10 +4,11 @@ import { useAudio } from "@/features/audio/context/AudioContext";
 import {
 	generateSessionComment,
 	postIssueComment,
-} from "@/features/github/services/githubService";
+} from "@/features/github/services/githubCommentService";
 import { useSettings } from "@/features/settings/context/SettingsContext";
 import { incrementTaskPomos } from "@/features/tasks/services/taskService";
 import type { Task } from "@/types";
+import { timerModeToSessionMode } from "../lib/modeConverter";
 import type { TimerEvent, TimerMode } from "../machines/timerMachine";
 import { createSession } from "../services/sessionService";
 
@@ -22,12 +23,6 @@ interface UseTimerEffectsProps {
 	send: (event: TimerEvent) => void;
 	getDuration: (mode: TimerMode) => number;
 }
-
-const timerModeToSessionMode = (mode: TimerMode) => {
-	if (mode === "shortBreak") return "short-break";
-	if (mode === "longBreak") return "long-break";
-	return "focus";
-};
 
 export const useTimerEffects = ({
 	selectedTask,

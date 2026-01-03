@@ -8,7 +8,7 @@ import {
 	YAxis,
 } from "recharts";
 import { useReducedMotion } from "@/components/ui/AnimatedContainer";
-import type { ActivityData } from "../services/analyticsService";
+import type { ActivityData } from "../services/analyticsTypes";
 
 interface ActivityChartProps {
 	data: ActivityData[];

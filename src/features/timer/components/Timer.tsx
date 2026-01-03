@@ -3,17 +3,18 @@ import { lazy, Suspense, useCallback, useEffect, useRef } from "react";
 import { Celebration } from "@/components/ui/AnimatedContainer";
 import { TabButton } from "@/components/ui/TabButton";
 import { useAudio } from "@/features/audio/context/AudioContext";
-import { generateSessionComment } from "@/features/github/services/githubService";
+import { generateSessionComment } from "@/features/github/services/githubCommentService";
 import { useSettings } from "@/features/settings/context/SettingsContext";
 import { useThemeContext } from "@/features/settings/context/ThemeContext";
 import { updateStateSettings } from "@/features/settings/services/settingsService";
 import { useSelectedTask } from "@/features/tasks/context/TaskContext";
 import { updateTask } from "@/features/tasks/services/taskService";
 import { useTimer } from "@/features/timer/hooks/useTimer";
-import type { TimerMode } from "@/features/timer/machines/timerMachine";
 import { formatTime } from "@/lib/utils";
 import { useTimerEffects } from "../hooks/useTimerEffects";
 import { useTimerNotifications } from "../hooks/useTimerNotifications";
+import { timerModeToSessionMode } from "../lib/modeConverter";
+import type { TimerMode } from "../machines/timerMachine";
 import { CircularProgress } from "./CircularProgress";
 import { GitHubLogPrompt } from "./GitHubLogPrompt";
 import { TimerControls } from "./TimerControls";
@@ -25,12 +26,6 @@ const BreakSuggestionModal = lazy(() =>
 		default: module.BreakSuggestionModal,
 	})),
 );
-
-const timerModeToSessionMode = (mode: TimerMode) => {
-	if (mode === "shortBreak") return "short-break";
-	if (mode === "longBreak") return "long-break";
-	return "focus";
-};
 
 export const Timer = () => {
 	const { selectedTask, clearSelectedTask } = useSelectedTask();

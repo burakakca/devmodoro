@@ -1,6 +1,6 @@
 import { memo } from "react";
 import { TabButton } from "@/components/ui/TabButton";
-import type { TimeRange } from "../services/analyticsService";
+import type { TimeRange } from "../services/analyticsTypes";
 
 const RANGES: { value: TimeRange; label: string }[] = [
 	{ value: "today", label: "Today" },

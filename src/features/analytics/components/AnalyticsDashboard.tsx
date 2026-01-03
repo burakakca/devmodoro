@@ -1,8 +1,9 @@
 import { useMemo } from "react";
-import { useAnalytics } from "../hooks/useAnalytics";
-import type { TimeRange } from "../services/analyticsService";
+import { useAnalytics, useGitHubAnalytics } from "../hooks/useAnalytics";
+import type { TimeRange } from "../services/analyticsTypes";
 import { DailyActivityChart } from "./DailyActivityChart";
 import { ExportButton } from "./ExportButton";
+import { GitHubStatsSection } from "./GitHubStatsSection";
 import { MetricsCards } from "./MetricsCards";
 import { SessionHistory } from "./SessionHistory";
 import { TimeRangeSelector } from "./TimeRangeSelector";
@@ -26,6 +27,8 @@ export const AnalyticsDashboard = () => {
 		insights,
 		isLoading,
 	} = useAnalytics();
+
+	const gitHubAnalytics = useGitHubAnalytics();
 
 	const chartTitle = useMemo(() => CHART_TITLES[timeRange], [timeRange]);
 
@@ -81,6 +84,9 @@ export const AnalyticsDashboard = () => {
 				</h2>
 				<DailyActivityChart data={activityData} />
 			</section>
+
+			{/* GitHub Stats */}
+			<GitHubStatsSection {...gitHubAnalytics} />
 
 			{/* Session History */}
 			<section

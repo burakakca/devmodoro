@@ -1,6 +1,6 @@
 import { Calendar, Clock, Flame, Hash, Target, TrendingUp } from "lucide-react";
 import { memo } from "react";
-import type { ProductivityInsights } from "../services/analyticsService";
+import type { ProductivityInsights } from "../services/analyticsTypes";
 import { formatDuration, formatHour } from "../utils/formatters";
 import { MetricCard } from "./MetricCard";
 

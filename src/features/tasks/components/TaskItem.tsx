@@ -1,46 +1,17 @@
-import {
-	CheckCircle2,
-	Circle,
-	Clock,
-	ExternalLink,
-	Play,
-	Trash2,
-} from "lucide-react";
+import { ExternalLink, Play, Trash2 } from "lucide-react";
 import { memo, useCallback, useState } from "react";
 import { deleteTask, updateTask } from "@/features/tasks/services/taskService";
 import type { Task, TaskStatus } from "@/types";
+import {
+	TASK_STATUS_CONFIG,
+	TASK_STATUS_ORDER,
+} from "../constants/taskStatusConfig";
 
 interface TaskItemProps {
 	task: Task;
 	isSelected: boolean;
 	onSelect?: () => void;
 }
-
-const STATUS_CONFIG: Record<
-	TaskStatus,
-	{ label: string; icon: typeof Circle; color: string; bg: string }
-> = {
-	todo: {
-		label: "To Do",
-		icon: Circle,
-		color: "text-theme-text-muted",
-		bg: "bg-theme-bg-tertiary",
-	},
-	"in-progress": {
-		label: "In Progress",
-		icon: Clock,
-		color: "text-warning",
-		bg: "bg-warning",
-	},
-	done: {
-		label: "Done",
-		icon: CheckCircle2,
-		color: "text-success",
-		bg: "bg-success",
-	},
-};
-
-const STATUS_ORDER: TaskStatus[] = ["todo", "in-progress", "done"];
 
 export const TaskItem = memo(function TaskItem({
 	task,
@@ -50,7 +21,7 @@ export const TaskItem = memo(function TaskItem({
 	const [showStatusMenu, setShowStatusMenu] = useState(false);
 	const [isDeleting, setIsDeleting] = useState(false);
 
-	const statusConfig = STATUS_CONFIG[task.status];
+	const statusConfig = TASK_STATUS_CONFIG[task.status];
 	const StatusIcon = statusConfig.icon;
 	const progress =
 		task.estimatedPomos > 0
@@ -112,8 +83,8 @@ export const TaskItem = memo(function TaskItem({
 								className="absolute left-0 top-8 z-20 bg-theme-bg-secondary border border-theme-border rounded-lg shadow-xl py-1 min-w-32"
 								role="menu"
 							>
-								{STATUS_ORDER.map((status) => {
-									const config = STATUS_CONFIG[status];
+								{TASK_STATUS_ORDER.map((status) => {
+									const config = TASK_STATUS_CONFIG[status];
 									const Icon = config.icon;
 									return (
 										<button

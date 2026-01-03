@@ -1,10 +1,8 @@
 import { useInfiniteQuery, useMutation } from "@tanstack/react-query";
 import { useLiveQuery } from "dexie-react-hooks";
-import { AnimatePresence, motion } from "framer-motion";
 import {
 	AlertCircle,
 	Check,
-	ChevronDown,
 	ExternalLink,
 	Github,
 	Loader2,
@@ -14,14 +12,14 @@ import {
 	X,
 } from "lucide-react";
 import { useMemo, useState } from "react";
-import { useReducedMotion } from "@/components/ui/AnimatedContainer";
+import { CollapsibleGroup } from "@/components/ui/CollapsibleGroup";
 import { db } from "@/db/db";
-import {
-	type GitHubIssue,
-	type GitHubIssuesResult,
-	getAssignedIssues,
-	getLabelTextColor,
-} from "@/features/github/services/githubService";
+import { getAssignedIssues } from "@/features/github/services/githubIssueService";
+import type {
+	GitHubIssue,
+	GitHubIssuesResult,
+} from "@/features/github/services/githubTypes";
+import { getLabelTextColor } from "@/features/github/services/githubUtils";
 import { useSettings } from "@/features/settings/context/SettingsContext";
 import { createTask } from "@/features/tasks/services/taskService";
 
@@ -52,152 +50,125 @@ function RepoGroup({
 	cancelImport: () => void;
 	confirmImport: (issue: GitHubIssue) => void;
 }) {
-	const [isExpanded, setIsExpanded] = useState(true);
-	const reducedMotion = useReducedMotion();
-
 	return (
-		<div className="space-y-2">
-			<button
-				type="button"
-				onClick={() => setIsExpanded(!isExpanded)}
-				className="flex items-center gap-2 w-full text-left focus:outline-none group py-1"
-			>
-				<h3 className="text-xs font-semibold text-theme-text-secondary uppercase tracking-wider flex-1 truncate">
-					{repoName} ({issues.length})
-				</h3>
-				<ChevronDown
-					className={`w-3.5 h-3.5 transition-transform duration-200 ${
-						isExpanded ? "rotate-0" : "-rotate-90"
-					} text-theme-text-muted group-hover:text-theme-text`}
-				/>
-			</button>
+		<CollapsibleGroup
+			title={repoName}
+			count={issues.length}
+			size="sm"
+			headerClassName="text-theme-text-secondary font-semibold"
+			defaultExpanded={false}
+		>
+			<ul className="space-y-2">
+				{issues.map((issue) => {
+					const isImporting = importingIssueId === issue.id;
+					const isProcessing = processingIds.has(issue.id);
+					const count = issueUrlCounts.get(issue.html_url) || 0;
 
-			<AnimatePresence initial={false}>
-				{isExpanded && (
-					<motion.div
-						initial={reducedMotion ? false : { height: 0, opacity: 0 }}
-						animate={{ height: "auto", opacity: 1 }}
-						exit={reducedMotion ? undefined : { height: 0, opacity: 0 }}
-						transition={{ duration: 0.2, ease: "easeInOut" }}
-						className="overflow-hidden"
-					>
-						<ul className="space-y-2 pt-1">
-							{issues.map((issue) => {
-								const isImporting = importingIssueId === issue.id;
-								const isProcessing = processingIds.has(issue.id);
-								const count = issueUrlCounts.get(issue.html_url) || 0;
-
-								return (
-									<li key={issue.id}>
-										<article
-											className="p-3 bg-theme-bg-tertiary rounded-lg hover:bg-theme-bg-tertiary/80 transition-colors relative"
-											aria-labelledby={`issue-title-${issue.id}`}
+					return (
+						<li key={issue.id}>
+							<article
+								className="p-3 bg-theme-bg-tertiary rounded-lg hover:bg-theme-bg-tertiary/80 transition-colors relative"
+								aria-labelledby={`issue-title-${issue.id}`}
+							>
+								<div className="flex items-start gap-2">
+									<div className="flex-1 min-w-0">
+										<h4
+											id={`issue-title-${issue.id}`}
+											className="text-sm font-medium text-theme-text leading-snug"
 										>
-											<div className="flex items-start gap-2">
-												<div className="flex-1 min-w-0">
-													<h4
-														id={`issue-title-${issue.id}`}
-														className="text-sm font-medium text-theme-text leading-snug"
+											<span className="text-theme-text-secondary">
+												#{issue.number}
+											</span>{" "}
+											{issue.title}
+											{count > 0 && (
+												<span className="ml-2 text-[10px] px-1.5 py-0.5 bg-primary/20 text-primary rounded-full font-bold">
+													{count}
+												</span>
+											)}
+										</h4>
+
+										{issue.labels.length > 0 && (
+											<div className="flex flex-wrap gap-1 mt-2">
+												{issue.labels.slice(0, 3).map((label) => (
+													<span
+														key={label.id}
+														className="inline-flex items-center px-1.5 py-0.5 rounded text-xs font-medium"
+														style={{
+															backgroundColor: `#${label.color}`,
+															color: getLabelTextColor(label.color),
+														}}
 													>
-														<span className="text-theme-text-secondary">
-															#{issue.number}
-														</span>{" "}
-														{issue.title}
-														{count > 0 && (
-															<span className="ml-2 text-[10px] px-1.5 py-0.5 bg-primary/20 text-primary rounded-full font-bold">
-																{count}
-															</span>
-														)}
-													</h4>
-
-													{issue.labels.length > 0 && (
-														<div className="flex flex-wrap gap-1 mt-2">
-															{issue.labels.slice(0, 3).map((label) => (
-																<span
-																	key={label.id}
-																	className="inline-flex items-center px-1.5 py-0.5 rounded text-xs font-medium"
-																	style={{
-																		backgroundColor: `#${label.color}`,
-																		color: getLabelTextColor(label.color),
-																	}}
-																>
-																	{label.name}
-																</span>
-															))}
-														</div>
-													)}
-												</div>
-
-												<div className="flex items-center gap-1 flex-shrink-0">
-													{isImporting ? (
-														<div className="flex items-center gap-1 bg-theme-bg-secondary p-1 rounded-lg shadow-lg border border-theme-border absolute right-2 top-2 z-10">
-															<input
-																type="number"
-																min="1"
-																max="20"
-																value={estimate}
-																onChange={(e) =>
-																	setEstimate(
-																		Math.max(
-																			1,
-																			parseInt(e.target.value, 10) || 0,
-																		),
-																	)
-																}
-																className="w-10 px-1 py-0.5 text-xs bg-theme-bg-tertiary border border-theme-border rounded text-center text-theme-text"
-															/>
-															<button
-																type="button"
-																onClick={() => confirmImport(issue)}
-																className="p-1 text-green-500 hover:bg-green-500/10 rounded"
-															>
-																<Check className="w-3.5 h-3.5" />
-															</button>
-															<button
-																type="button"
-																onClick={() => {
-																	cancelImport();
-																}}
-																className="p-1 text-red-500 hover:bg-red-500/10 rounded"
-															>
-																<X className="w-3.5 h-3.5" />
-															</button>
-														</div>
-													) : (
-														<>
-															<a
-																href={issue.html_url}
-																target="_blank"
-																rel="noopener noreferrer"
-																className="p-1.5 text-theme-text-muted hover:text-theme-text rounded transition-colors"
-															>
-																<ExternalLink className="w-4 h-4" />
-															</a>
-															<button
-																type="button"
-																onClick={() => startImport(issue.id)}
-																disabled={isProcessing}
-																className="p-1.5 text-primary hover:bg-primary/10 rounded transition-colors"
-															>
-																{isProcessing ? (
-																	<Loader2 className="w-4 h-4 animate-spin" />
-																) : (
-																	<Plus className="w-4 h-4" />
-																)}
-															</button>
-														</>
-													)}
-												</div>
+														{label.name}
+													</span>
+												))}
 											</div>
-										</article>
-									</li>
-								);
-							})}
-						</ul>
-					</motion.div>
-				)}
-			</AnimatePresence>
-		</div>
+										)}
+									</div>
+
+									<div className="flex items-center gap-1 flex-shrink-0">
+										{isImporting ? (
+											<div className="flex items-center gap-1 bg-theme-bg-secondary p-1 rounded-lg shadow-lg border border-theme-border absolute right-2 top-2 z-10">
+												<input
+													type="number"
+													min="1"
+													max="20"
+													value={estimate}
+													onChange={(e) =>
+														setEstimate(
+															Math.max(1, parseInt(e.target.value, 10) || 0),
+														)
+													}
+													className="w-10 px-1 py-0.5 text-xs bg-theme-bg-tertiary border border-theme-border rounded text-center text-theme-text"
+												/>
+												<button
+													type="button"
+													onClick={() => confirmImport(issue)}
+													className="p-1 text-green-500 hover:bg-green-500/10 rounded"
+												>
+													<Check className="w-3.5 h-3.5" />
+												</button>
+												<button
+													type="button"
+													onClick={() => {
+														cancelImport();
+													}}
+													className="p-1 text-red-500 hover:bg-red-500/10 rounded"
+												>
+													<X className="w-3.5 h-3.5" />
+												</button>
+											</div>
+										) : (
+											<>
+												<a
+													href={issue.html_url}
+													target="_blank"
+													rel="noopener noreferrer"
+													className="p-1.5 text-theme-text-muted hover:text-theme-text rounded transition-colors"
+												>
+													<ExternalLink className="w-4 h-4" />
+												</a>
+												<button
+													type="button"
+													onClick={() => startImport(issue.id)}
+													disabled={isProcessing}
+													className="p-1.5 text-primary hover:bg-primary/10 rounded transition-colors"
+												>
+													{isProcessing ? (
+														<Loader2 className="w-4 h-4 animate-spin" />
+													) : (
+														<Plus className="w-4 h-4" />
+													)}
+												</button>
+											</>
+										)}
+									</div>
+								</div>
+							</article>
+						</li>
+					);
+				})}
+			</ul>
+		</CollapsibleGroup>
 	);
 }
 

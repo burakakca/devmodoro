@@ -21,7 +21,7 @@ export const DEFAULT_SETTINGS: Settings = {
 		alarmVolume: 50,
 		alarmRepeat: 1,
 		tickingVolume: 50,
-		tickingEnabled: false,
+		tickingEnabled: true,
 		ambientMix: {
 			rain: 0,
 			fire: 0,

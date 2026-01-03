@@ -1,11 +1,11 @@
 import { useMutation } from "@tanstack/react-query";
 import { useCallback, useRef, useState } from "react";
+import { timerModeToSessionMode } from "@/features/timer/lib/modeConverter";
+import type { TimerMode } from "@/features/timer/machines/timerMachine";
 import {
 	generateSessionComment,
 	postIssueComment,
-} from "@/features/github/services/githubService";
-import type { TimerMode } from "@/features/timer/machines/timerMachine";
-import type { SessionMode } from "@/types";
+} from "../services/githubCommentService";
 
 interface SessionLogData {
 	mode: TimerMode;
@@ -19,12 +19,6 @@ interface UseGitHubSessionLoggerOptions {
 	isConnected: boolean;
 	autoPost: boolean;
 }
-
-const timerModeToSessionMode = (mode: TimerMode): SessionMode => {
-	if (mode === "shortBreak") return "short-break";
-	if (mode === "longBreak") return "long-break";
-	return "focus";
-};
 
 export const useGitHubSessionLogger = ({
 	githubToken,

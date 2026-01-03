@@ -2,7 +2,8 @@ import { useCallback } from "react";
 import { incrementTaskPomos } from "@/features/tasks/services/taskService";
 import type { TimerMode } from "@/features/timer/machines/timerMachine";
 import { createSession } from "@/features/timer/services/sessionService";
-import type { SessionMode, Task } from "@/types";
+import type { Task } from "@/types";
+import { timerModeToSessionMode } from "../lib/modeConverter";
 
 interface UseSessionLoggerOptions {
 	selectedTask: Task | null;
@@ -15,12 +16,6 @@ interface UseSessionLoggerOptions {
 		externalLink?: string;
 	}) => void;
 }
-
-const timerModeToSessionMode = (mode: TimerMode): SessionMode => {
-	if (mode === "shortBreak") return "short-break";
-	if (mode === "longBreak") return "long-break";
-	return "focus";
-};
 
 export const useSessionLogger = ({
 	selectedTask,
