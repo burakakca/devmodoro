@@ -100,7 +100,7 @@ export const TimerControls = memo(
 				</div>
 
 				{isFocus && !hasSelectedTask && !isCompleted && (
-					<p className="text-xs text-primary font-medium animate-pulse">
+					<p className="text-xs text-theme-text-secondary font-medium">
 						Select a task to start focusing
 					</p>
 				)}
