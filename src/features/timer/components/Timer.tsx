@@ -1,6 +1,5 @@
 import { Brain, Coffee } from "lucide-react";
 import { lazy, Suspense, useCallback, useEffect, useRef } from "react";
-import { Celebration } from "@/components/ui/AnimatedContainer";
 import { TabButton } from "@/components/ui/TabButton";
 import { useAudio } from "@/features/audio/context/AudioContext";
 import { generateSessionComment } from "@/features/github/services/githubCommentService";
@@ -24,6 +23,13 @@ import { TimerStats } from "./TimerStats";
 const BreakSuggestionModal = lazy(() =>
 	import("./BreakSuggestionModal").then((module) => ({
 		default: module.BreakSuggestionModal,
+	})),
+);
+
+// Lazy load Celebration to avoid loading framer-motion initially
+const Celebration = lazy(() =>
+	import("@/components/ui/AnimatedContainer").then((module) => ({
+		default: module.Celebration,
 	})),
 );
 
@@ -316,12 +322,11 @@ export const Timer = () => {
 				}}
 			/>
 
-			<Celebration
-				show={showCelebration}
-				onComplete={() => setShowCelebration(false)}
-			/>
-
 			<Suspense fallback={null}>
+				<Celebration
+					show={showCelebration}
+					onComplete={() => setShowCelebration(false)}
+				/>
 				<BreakSuggestionModal
 					isOpen={showBreakModal}
 					onClose={() => setShowBreakModal(false)}

@@ -1,13 +1,8 @@
 import { AnimatePresence, motion, type Variants } from "framer-motion";
 import { type ReactNode, useEffect, useState } from "react";
+import { useReducedMotion } from "@/hooks/useReducedMotion";
 
-/**
- * Hook to check if user prefers reduced motion
- */
-export const useReducedMotion = (): boolean => {
-	if (typeof window === "undefined") return false;
-	return window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-};
+export { useReducedMotion };
 
 /**
  * Animation presets that respect reduced motion preferences

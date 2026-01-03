@@ -1,7 +1,7 @@
 import { motion } from "framer-motion";
 import { Pause, Play, RotateCcw, SkipForward } from "lucide-react";
 import { memo } from "react";
-import { useReducedMotion } from "@/components/ui/AnimatedContainer";
+import { useReducedMotion } from "@/hooks/useReducedMotion";
 
 interface TimerControlsProps {
 	isRunning: boolean;

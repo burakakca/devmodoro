@@ -2,12 +2,13 @@ import { memo } from "react";
 import {
 	Bar,
 	BarChart,
+	CartesianGrid,
 	ResponsiveContainer,
 	Tooltip,
 	XAxis,
 	YAxis,
 } from "recharts";
-import { useReducedMotion } from "@/components/ui/AnimatedContainer";
+import { useReducedMotion } from "@/hooks/useReducedMotion";
 import type { ActivityData } from "../services/analyticsTypes";
 
 interface ActivityChartProps {

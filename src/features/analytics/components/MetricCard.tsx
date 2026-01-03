@@ -1,7 +1,7 @@
 import { motion } from "framer-motion";
 import type { LucideIcon } from "lucide-react";
 import { memo } from "react";
-import { useReducedMotion } from "@/components/ui/AnimatedContainer";
+import { useReducedMotion } from "@/hooks/useReducedMotion";
 
 interface MetricCardProps {
 	label: string;

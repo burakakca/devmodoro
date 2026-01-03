@@ -4,7 +4,6 @@ import { lazy, Suspense, useState } from "react";
 import { TabButton } from "@/components/ui/TabButton";
 import { useSettings } from "@/features/settings/context/SettingsContext";
 import { useThemeContext } from "@/features/settings/context/ThemeContext";
-import { TaskList } from "@/features/tasks/components/TaskList";
 import { useSelectedTask } from "@/features/tasks/context/TaskContext";
 import { Timer } from "@/features/timer/components/Timer";
 import type { Task } from "@/types";
@@ -32,6 +31,11 @@ const SoundMixer = lazy(() =>
 const TaskForm = lazy(() =>
 	import("@/features/tasks/components/TaskForm").then((module) => ({
 		default: module.TaskForm,
+	})),
+);
+const TaskList = lazy(() =>
+	import("@/features/tasks/components/TaskList").then((module) => ({
+		default: module.TaskList,
 	})),
 );
 
@@ -181,10 +185,19 @@ function HomePage() {
 								>
 									Tasks
 								</h2>
-								<TaskList
-									onSelectTask={handleSelectTask}
-									selectedTaskId={selectedTask?.id}
-								/>
+								<Suspense
+									fallback={
+										<div className="space-y-4 animate-pulse">
+											<div className="h-16 bg-theme-bg-tertiary rounded-lg" />
+											<div className="h-16 bg-theme-bg-tertiary rounded-lg" />
+										</div>
+									}
+								>
+									<TaskList
+										onSelectTask={handleSelectTask}
+										selectedTaskId={selectedTask?.id}
+									/>
+								</Suspense>
 							</section>
 						</div>
 					</aside>

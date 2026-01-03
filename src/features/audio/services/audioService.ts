@@ -1,4 +1,4 @@
-import { Howl, Howler } from "howler";
+import type { Howl, Howler } from "howler";
 import type { SoundSettings } from "@/types";
 
 /**
@@ -59,6 +59,10 @@ class AudioManager {
 	private loadPromise: Promise<void> | null = null;
 	private tickingEnabled = false;
 
+	// Dynamic Howler imports
+	private HowlClass: typeof Howl | null = null;
+	private HowlerGlobal: typeof Howler | null = null;
+
 	// Synthetic tick sound using Web Audio API
 	private audioContext: AudioContext | null = null;
 	private tickInterval: ReturnType<typeof setInterval> | null = null;
@@ -80,6 +84,11 @@ class AudioManager {
 
 	private async doLoadSounds(): Promise<void> {
 		if (this.isLoaded) return;
+
+		// Dynamically load Howler
+		const { Howl, Howler } = await import("howler");
+		this.HowlClass = Howl;
+		this.HowlerGlobal = Howler;
 
 		const loadPromises: Promise<void>[] = [];
 
@@ -126,8 +135,12 @@ class AudioManager {
 			if (this.audioContext?.state === "suspended") {
 				await this.audioContext.resume();
 			}
-			if (Howler.ctx && Howler.ctx.state === "suspended") {
-				await Howler.ctx.resume();
+			// Resume Howler context if loaded
+			if (
+				this.HowlerGlobal?.ctx &&
+				this.HowlerGlobal.ctx.state === "suspended"
+			) {
+				await this.HowlerGlobal.ctx.resume();
 			}
 			return this.isAudioUnlocked();
 		} catch (error) {
@@ -142,13 +155,17 @@ class AudioManager {
 	isAudioUnlocked(): boolean {
 		const webAudioUnlocked =
 			!this.audioContext || this.audioContext.state === "running";
-		const howlerUnlocked = !Howler.ctx || Howler.ctx.state === "running";
+		const howlerUnlocked =
+			!this.HowlerGlobal?.ctx || this.HowlerGlobal.ctx.state === "running";
 		return webAudioUnlocked && howlerUnlocked;
 	}
 
 	private loadTrack(track: AudioTrack, loop: boolean): Promise<void> {
+		if (!this.HowlClass) return Promise.resolve();
+
 		return new Promise((resolve) => {
-			const sound = new Howl({
+			// biome-ignore lint/style/noNonNullAssertion: Guarded above
+			const sound = new this.HowlClass!({
 				src: [AUDIO_PATHS[track]],
 				loop,
 				volume: 0,

@@ -1,11 +1,9 @@
 import { useLiveQuery } from "dexie-react-hooks";
 import { motion } from "framer-motion";
-import {
-	AnimatedContainer,
-	useReducedMotion,
-} from "@/components/ui/AnimatedContainer";
+import { AnimatedContainer } from "@/components/ui/AnimatedContainer";
 import { CollapsibleGroup } from "@/components/ui/CollapsibleGroup";
 import { db } from "@/db/db";
+import { useReducedMotion } from "@/hooks/useReducedMotion";
 import type { Task, TaskStatus } from "@/types";
 import { TASK_STATUS_CONFIG } from "../constants/taskStatusConfig";
 import { TaskItem } from "./TaskItem";
