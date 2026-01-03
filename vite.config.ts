@@ -1,3 +1,4 @@
+/// <reference types="vitest/config" />
 import path from "node:path";
 import tailwindcss from "@tailwindcss/vite";
 import { tanstackRouter } from "@tanstack/router-vite-plugin";
@@ -28,6 +29,16 @@ export default defineConfig({
 					"vendor-utils": ["howler", "dexie", "dexie-react-hooks"],
 				},
 			},
+		},
+	},
+	test: {
+		globals: true,
+		environment: "jsdom",
+		setupFiles: ["./src/test/setup.ts"],
+		include: ["src/**/*.{test,spec}.{ts,tsx}"],
+		coverage: {
+			reporter: ["text", "json", "html"],
+			exclude: ["node_modules/", "src/test/"],
 		},
 	},
 });
