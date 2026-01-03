@@ -2,7 +2,6 @@ import { memo } from "react";
 import {
 	Bar,
 	BarChart,
-	CartesianGrid,
 	ResponsiveContainer,
 	Tooltip,
 	XAxis,
