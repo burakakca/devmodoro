@@ -1,5 +1,6 @@
 import { Brain, Coffee } from "lucide-react";
 import { lazy, Suspense, useCallback, useEffect, useRef } from "react";
+import { createPortal } from "react-dom";
 import { TabButton } from "@/components/ui/TabButton";
 import { useAudio } from "@/features/audio/context/AudioContext";
 import { generateSessionComment } from "@/features/github/services/githubCommentService";
@@ -9,6 +10,7 @@ import { updateStateSettings } from "@/features/settings/services/settingsServic
 import { useSelectedTask } from "@/features/tasks/context/TaskContext";
 import { updateTask } from "@/features/tasks/services/taskService";
 import { useTimer } from "@/features/timer/hooks/useTimer";
+import { usePictureInPicture } from "@/hooks/usePictureInPicture";
 import { formatTime } from "@/lib/utils";
 import { useTimerEffects } from "../hooks/useTimerEffects";
 import { useTimerNotifications } from "../hooks/useTimerNotifications";
@@ -17,6 +19,7 @@ import type { TimerMode } from "../machines/timerMachine";
 import { CircularProgress } from "./CircularProgress";
 import { GitHubLogPrompt } from "./GitHubLogPrompt";
 import { TimerControls } from "./TimerControls";
+import { TimerPipView } from "./TimerPipView";
 import { TimerStats } from "./TimerStats";
 
 // Lazy load modal that only shows conditionally
@@ -39,6 +42,12 @@ export const Timer = () => {
 	const { setTimerRunning } = useThemeContext();
 	const { playFocus } = useAudio();
 	const { timer: timerSettings, integration } = settings;
+	const {
+		isSupported: isPipSupported,
+		isActive: isPipActive,
+		window: pipWindow,
+		requestPip,
+	} = usePictureInPicture();
 
 	// Calculate duration based on current mode
 	const getDuration = useCallback(
@@ -301,6 +310,11 @@ export const Timer = () => {
 				onPause={() => send({ type: "PAUSE" })}
 				onReset={() => send({ type: "RESET" })}
 				onSkip={() => send({ type: "SKIP" })}
+				onPip={
+					isPipSupported && !isPipActive
+						? () => requestPip({ width: 320, height: 320 })
+						: undefined
+				}
 			/>
 
 			<TimerStats
@@ -337,6 +351,20 @@ export const Timer = () => {
 					shortBreakDuration={timerSettings.shortBreak}
 				/>
 			</Suspense>
+
+			{isPipActive &&
+				pipWindow &&
+				createPortal(
+					<TimerPipView
+						timeLeft={timeLeft}
+						mode={mode}
+						isRunning={isRunning}
+						onPlay={handlePlay}
+						onPause={() => send({ type: "PAUSE" })}
+						onSkip={() => send({ type: "SKIP" })}
+					/>,
+					pipWindow.document.body,
+				)}
 		</section>
 	);
 };

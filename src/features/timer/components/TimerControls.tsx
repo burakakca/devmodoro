@@ -1,5 +1,11 @@
 import { motion } from "framer-motion";
-import { Pause, Play, RotateCcw, SkipForward } from "lucide-react";
+import {
+	Pause,
+	PictureInPicture2,
+	Play,
+	RotateCcw,
+	SkipForward,
+} from "lucide-react";
 import { memo } from "react";
 import { useReducedMotion } from "@/hooks/useReducedMotion";
 
@@ -14,6 +20,7 @@ interface TimerControlsProps {
 	onPause: () => void;
 	onReset: () => void;
 	onSkip: () => void;
+	onPip?: () => void;
 }
 
 export const TimerControls = memo(
@@ -28,6 +35,7 @@ export const TimerControls = memo(
 		onPause,
 		onReset,
 		onSkip,
+		onPip,
 	}: TimerControlsProps) => {
 		const reducedMotion = useReducedMotion();
 
@@ -97,6 +105,19 @@ export const TimerControls = memo(
 					>
 						<SkipForward className="w-8 h-8" aria-hidden="true" />
 					</motion.button>
+
+					{onPip && (
+						<motion.button
+							type="button"
+							onClick={onPip}
+							className="p-4 bg-theme-bg-tertiary hover:opacity-80 rounded-full transition-colors text-theme-text focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2"
+							aria-label="Open mini player"
+							whileHover={reducedMotion ? undefined : { scale: 1.1 }}
+							whileTap={reducedMotion ? undefined : { scale: 0.95 }}
+						>
+							<PictureInPicture2 className="w-8 h-8" aria-hidden="true" />
+						</motion.button>
+					)}
 				</div>
 
 				{isFocus && !hasSelectedTask && !isCompleted && (
