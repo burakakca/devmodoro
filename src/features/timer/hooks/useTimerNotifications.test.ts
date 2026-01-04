@@ -1,5 +1,5 @@
 import { renderHook } from "@testing-library/react";
-import { beforeEach, describe, expect, it, vi } from "vitest";
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { useTimerNotifications } from "./useTimerNotifications";
 
 // Mock useDocumentTitle
@@ -15,11 +15,41 @@ vi.mock("@/features/audio/context/AudioContext", () => ({
 	}),
 }));
 
+// Mock useSettings
+const mockSettings = {
+	notification: {
+		browserNotifications: true,
+	},
+};
+vi.mock("@/features/settings/context/SettingsContext", () => ({
+	useSettings: () => ({
+		settings: mockSettings,
+	}),
+}));
+
 import { useDocumentTitle } from "@/hooks/useDocumentTitle";
 
 describe("useTimerNotifications", () => {
+	const mockNotification = vi.fn();
+
 	beforeEach(() => {
 		vi.clearAllMocks();
+		mockSettings.notification.browserNotifications = true;
+
+		// Mock global Notification
+		// Mock global Notification
+		const MockNotification = class {
+			constructor(title: string, options?: NotificationOptions) {
+				mockNotification(title, options);
+			}
+			static permission = "granted";
+			static requestPermission = vi.fn();
+		};
+		vi.stubGlobal("Notification", MockNotification);
+	});
+
+	afterEach(() => {
+		vi.unstubAllGlobals();
 	});
 
 	it("calls useDocumentTitle with correct props", () => {
@@ -29,6 +59,7 @@ describe("useTimerNotifications", () => {
 				mode: "focus",
 				taskTitle: "My Task",
 				isRunning: true,
+				isCompleted: false,
 				tickingEnabled: true,
 			}),
 		);
@@ -47,6 +78,7 @@ describe("useTimerNotifications", () => {
 				mode: "focus" as const,
 				taskTitle: "Task 1",
 				isRunning: true,
+				isCompleted: false,
 				tickingEnabled: true,
 			},
 		});
@@ -56,6 +88,7 @@ describe("useTimerNotifications", () => {
 			mode: "focus",
 			taskTitle: "Task 2",
 			isRunning: true,
+			isCompleted: false,
 			tickingEnabled: true,
 		});
 
@@ -63,6 +96,91 @@ describe("useTimerNotifications", () => {
 			timeLeft: 1200,
 			mode: "focus",
 			taskTitle: "Task 2",
+		});
+	});
+
+	describe("browser notifications", () => {
+		it("triggers notification when completed and enabled", () => {
+			const { rerender } = renderHook((props) => useTimerNotifications(props), {
+				initialProps: {
+					timeLeft: 0,
+					mode: "focus" as const,
+					taskTitle: "Task",
+					isRunning: true,
+					isCompleted: false,
+					tickingEnabled: true,
+				},
+			});
+
+			rerender({
+				timeLeft: 0,
+				mode: "focus",
+				taskTitle: "Task",
+				isRunning: false,
+				isCompleted: true,
+				tickingEnabled: true,
+			});
+
+			expect(mockNotification).toHaveBeenCalledWith(
+				"Devmodoro",
+				expect.objectContaining({
+					body: expect.stringContaining("Focus Session Complete"),
+					icon: "/favicon.ico",
+				}),
+			);
+		});
+
+		it("does not trigger notification when disabled in settings", () => {
+			mockSettings.notification.browserNotifications = false;
+
+			const { rerender } = renderHook((props) => useTimerNotifications(props), {
+				initialProps: {
+					timeLeft: 0,
+					mode: "focus" as const,
+					taskTitle: "Task",
+					isRunning: true,
+					isCompleted: false,
+					tickingEnabled: true,
+				},
+			});
+
+			rerender({
+				timeLeft: 0,
+				mode: "focus",
+				taskTitle: "Task",
+				isRunning: false,
+				isCompleted: true,
+				tickingEnabled: true,
+			});
+
+			expect(mockNotification).not.toHaveBeenCalled();
+		});
+
+		it("does not trigger notification if permission not granted", () => {
+			// @ts-expect-error - mock permission
+			Notification.permission = "denied";
+
+			const { rerender } = renderHook((props) => useTimerNotifications(props), {
+				initialProps: {
+					timeLeft: 0,
+					mode: "focus" as const,
+					taskTitle: "Task",
+					isRunning: true,
+					isCompleted: false,
+					tickingEnabled: true,
+				},
+			});
+
+			rerender({
+				timeLeft: 0,
+				mode: "focus",
+				taskTitle: "Task",
+				isRunning: false,
+				isCompleted: true,
+				tickingEnabled: true,
+			});
+
+			expect(mockNotification).not.toHaveBeenCalled();
 		});
 	});
 
@@ -74,6 +192,7 @@ describe("useTimerNotifications", () => {
 					mode: "focus" as const,
 					taskTitle: undefined,
 					isRunning: false,
+					isCompleted: false,
 					tickingEnabled: true,
 				},
 			});
@@ -83,6 +202,7 @@ describe("useTimerNotifications", () => {
 				mode: "focus",
 				taskTitle: undefined,
 				isRunning: false,
+				isCompleted: false,
 				tickingEnabled: true,
 			});
 
@@ -96,6 +216,7 @@ describe("useTimerNotifications", () => {
 					mode: "focus" as const,
 					taskTitle: undefined,
 					isRunning: true,
+					isCompleted: false,
 					tickingEnabled: false,
 				},
 			});
@@ -105,6 +226,7 @@ describe("useTimerNotifications", () => {
 				mode: "focus",
 				taskTitle: undefined,
 				isRunning: true,
+				isCompleted: false,
 				tickingEnabled: false,
 			});
 
@@ -118,6 +240,7 @@ describe("useTimerNotifications", () => {
 					mode: "focus" as const,
 					taskTitle: undefined,
 					isRunning: true,
+					isCompleted: false,
 					tickingEnabled: true,
 				},
 			});
@@ -131,6 +254,7 @@ describe("useTimerNotifications", () => {
 				mode: "focus",
 				taskTitle: undefined,
 				isRunning: true,
+				isCompleted: false,
 				tickingEnabled: true,
 			});
 
@@ -144,6 +268,7 @@ describe("useTimerNotifications", () => {
 					mode: "focus" as const,
 					taskTitle: undefined,
 					isRunning: true,
+					isCompleted: false,
 					tickingEnabled: true,
 				},
 			});
@@ -154,6 +279,7 @@ describe("useTimerNotifications", () => {
 				mode: "focus",
 				taskTitle: undefined,
 				isRunning: true,
+				isCompleted: false,
 				tickingEnabled: true,
 			});
 			expect(mockPlayCountdownTick).toHaveBeenCalledWith(5);
@@ -164,6 +290,7 @@ describe("useTimerNotifications", () => {
 				mode: "focus",
 				taskTitle: undefined,
 				isRunning: true,
+				isCompleted: false,
 				tickingEnabled: true,
 			});
 			expect(mockPlayCountdownTick).toHaveBeenCalledWith(4);
@@ -174,6 +301,7 @@ describe("useTimerNotifications", () => {
 				mode: "focus",
 				taskTitle: undefined,
 				isRunning: true,
+				isCompleted: false,
 				tickingEnabled: true,
 			});
 			expect(mockPlayCountdownTick).toHaveBeenCalledWith(3);
@@ -184,6 +312,7 @@ describe("useTimerNotifications", () => {
 				mode: "focus",
 				taskTitle: undefined,
 				isRunning: true,
+				isCompleted: false,
 				tickingEnabled: true,
 			});
 			expect(mockPlayCountdownTick).toHaveBeenCalledWith(2);
@@ -194,6 +323,7 @@ describe("useTimerNotifications", () => {
 				mode: "focus",
 				taskTitle: undefined,
 				isRunning: true,
+				isCompleted: false,
 				tickingEnabled: true,
 			});
 			expect(mockPlayCountdownTick).toHaveBeenCalledWith(1);
@@ -208,6 +338,7 @@ describe("useTimerNotifications", () => {
 					mode: "focus" as const,
 					taskTitle: undefined,
 					isRunning: true,
+					isCompleted: false,
 					tickingEnabled: true,
 				},
 			});
@@ -220,6 +351,7 @@ describe("useTimerNotifications", () => {
 				mode: "focus",
 				taskTitle: undefined,
 				isRunning: true,
+				isCompleted: false,
 				tickingEnabled: true,
 			});
 
@@ -233,6 +365,7 @@ describe("useTimerNotifications", () => {
 					mode: "focus" as const,
 					taskTitle: undefined,
 					isRunning: true,
+					isCompleted: false,
 					tickingEnabled: true,
 				},
 			});
@@ -243,6 +376,7 @@ describe("useTimerNotifications", () => {
 				mode: "focus",
 				taskTitle: undefined,
 				isRunning: true,
+				isCompleted: false,
 				tickingEnabled: true,
 			});
 
@@ -256,6 +390,7 @@ describe("useTimerNotifications", () => {
 					mode: "focus" as const,
 					taskTitle: undefined,
 					isRunning: true,
+					isCompleted: false,
 					tickingEnabled: true,
 				},
 			});
@@ -266,6 +401,7 @@ describe("useTimerNotifications", () => {
 				mode: "focus",
 				taskTitle: undefined,
 				isRunning: true,
+				isCompleted: false,
 				tickingEnabled: true,
 			});
 
