@@ -220,14 +220,17 @@ export const Timer = () => {
 		pendingActionRef.current = null;
 	};
 
-	const handleLogToGitHub = async () => {
+	const defaultComment = lastCompletedSessionRef.current
+		? generateSessionComment({
+				duration: lastCompletedSessionRef.current.duration,
+				mode: timerModeToSessionMode(lastCompletedSessionRef.current.mode),
+				taskTitle: lastCompletedSessionRef.current.taskTitle,
+			})
+		: "";
+
+	const handleLogToGitHub = async (comment: string) => {
 		const session = lastCompletedSessionRef.current;
 		if (!session?.externalLink || !integration.github.token) return;
-		const comment = generateSessionComment({
-			duration: session.duration,
-			mode: timerModeToSessionMode(session.mode),
-			taskTitle: session.taskTitle,
-		});
 		postCommentMutation.mutate({
 			token: integration.github.token,
 			issueUrl: session.externalLink,
@@ -329,6 +332,7 @@ export const Timer = () => {
 				isSuccess={postCommentMutation.isSuccess}
 				isError={postCommentMutation.isError}
 				errorMessage={postCommentMutation.error?.message}
+				defaultComment={defaultComment}
 				onLog={handleLogToGitHub}
 				onDismiss={() => {
 					setShowGitHubPrompt(false);
