@@ -1,4 +1,4 @@
-import type { Howl, Howler } from "howler";
+import { Howl, Howler } from "howler";
 import type { SoundSettings } from "@/types";
 
 /**
@@ -37,7 +37,7 @@ const AUDIO_PATHS: Record<AudioTrack, string> = {
 	fire: "/audio/fire.mp3",
 	coffee: "/audio/coffee.mp3",
 	alarm: "/audio/alarm.wav",
-	focus: "/audio/focus.wav",
+	focus: "/audio/focus.mp3",
 	countdownTick: "/audio/countdown-tick.mp3",
 };
 
@@ -58,10 +58,6 @@ class AudioManager {
 	private isLoaded = false;
 	private loadPromise: Promise<void> | null = null;
 	private tickingEnabled = false;
-
-	// Dynamic Howler imports
-	private HowlClass: typeof Howl | null = null;
-	private HowlerGlobal: typeof Howler | null = null;
 
 	// Synthetic tick sound using Web Audio API
 	private audioContext: AudioContext | null = null;
@@ -84,11 +80,6 @@ class AudioManager {
 
 	private async doLoadSounds(): Promise<void> {
 		if (this.isLoaded) return;
-
-		// Dynamically load Howler
-		const { Howl, Howler } = await import("howler");
-		this.HowlClass = Howl;
-		this.HowlerGlobal = Howler;
 
 		const loadPromises: Promise<void>[] = [];
 
@@ -135,12 +126,8 @@ class AudioManager {
 			if (this.audioContext?.state === "suspended") {
 				await this.audioContext.resume();
 			}
-			// Resume Howler context if loaded
-			if (
-				this.HowlerGlobal?.ctx &&
-				this.HowlerGlobal.ctx.state === "suspended"
-			) {
-				await this.HowlerGlobal.ctx.resume();
+			if (Howler.ctx && Howler.ctx.state === "suspended") {
+				await Howler.ctx.resume();
 			}
 			return this.isAudioUnlocked();
 		} catch (error) {
@@ -155,17 +142,13 @@ class AudioManager {
 	isAudioUnlocked(): boolean {
 		const webAudioUnlocked =
 			!this.audioContext || this.audioContext.state === "running";
-		const howlerUnlocked =
-			!this.HowlerGlobal?.ctx || this.HowlerGlobal.ctx.state === "running";
+		const howlerUnlocked = !Howler.ctx || Howler.ctx.state === "running";
 		return webAudioUnlocked && howlerUnlocked;
 	}
 
 	private loadTrack(track: AudioTrack, loop: boolean): Promise<void> {
-		if (!this.HowlClass) return Promise.resolve();
-
 		return new Promise((resolve) => {
-			// biome-ignore lint/style/noNonNullAssertion: Guarded above
-			const sound = new this.HowlClass!({
+			const sound = new Howl({
 				src: [AUDIO_PATHS[track]],
 				loop,
 				volume: 0,
