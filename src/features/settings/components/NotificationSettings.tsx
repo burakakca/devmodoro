@@ -35,11 +35,30 @@ export function NotificationSettings() {
 	};
 
 	const testNotification = () => {
-		if (permissionStatus === "granted") {
-			new Notification("Devmodoro", {
-				body: "This is a test notification!",
-				icon: "/favicon.ico",
-			});
+		if (Notification.permission === "granted") {
+			try {
+				const n = new Notification("Devmodoro", {
+					body: "This is a test notification!",
+					icon: "/favicon.ico",
+					silent: false,
+					// @ts-expect-error - requireInteraction is not in all TS definitions
+					requireInteraction: false,
+				});
+				n.onclick = () => {
+					window.focus();
+					n.close();
+				};
+			} catch (error) {
+				console.error("Failed to show notification:", error);
+				alert(
+					"Failed to show notification. Please check your browser settings.",
+				);
+			}
+		} else {
+			alert(
+				"Notifications are not allowed. Please enable them in your browser settings.",
+			);
+			setPermissionStatus(Notification.permission);
 		}
 	};
 

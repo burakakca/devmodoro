@@ -1,5 +1,6 @@
 import { useEffect, useRef } from "react";
 import { useAudio } from "@/features/audio/context/AudioContext";
+import { useSettings } from "@/features/settings/context/SettingsContext";
 import { useDocumentTitle } from "@/hooks/useDocumentTitle";
 import type { TimerMode } from "../machines/timerMachine";
 
@@ -8,6 +9,7 @@ interface UseTimerNotificationsProps {
 	mode: TimerMode;
 	taskTitle?: string;
 	isRunning: boolean;
+	isCompleted: boolean;
 	tickingEnabled: boolean;
 }
 
@@ -16,9 +18,11 @@ export const useTimerNotifications = ({
 	mode,
 	taskTitle,
 	isRunning,
+	isCompleted,
 	tickingEnabled,
 }: UseTimerNotificationsProps) => {
 	const { playCountdownTick } = useAudio();
+	const { settings } = useSettings();
 	const prevTimeLeftRef = useRef<number | null>(null);
 
 	// Update document title
@@ -27,6 +31,43 @@ export const useTimerNotifications = ({
 		mode,
 		taskTitle,
 	});
+
+	// Trigger browser notification on completion
+	useEffect(() => {
+		if (
+			isCompleted &&
+			settings.notification.browserNotifications &&
+			"Notification" in window &&
+			Notification.permission === "granted"
+		) {
+			const title =
+				mode === "focus"
+					? "Focus Session Complete!"
+					: mode === "shortBreak"
+						? "Short Break Over!"
+						: "Long Break Over!";
+			const body =
+				mode === "focus"
+					? "Great job! Time for a break."
+					: "Time to get back to work!";
+
+			try {
+				const n = new Notification("Devmodoro", {
+					body: `${title} ${body}`,
+					icon: "/favicon.ico",
+					silent: false,
+					// @ts-expect-error - requireInteraction is not in all TS definitions
+					requireInteraction: true,
+				});
+				n.onclick = () => {
+					window.focus();
+					n.close();
+				};
+			} catch (error) {
+				console.error("Failed to show completion notification:", error);
+			}
+		}
+	}, [isCompleted, mode, settings.notification.browserNotifications]);
 
 	// Play countdown tick sound in last seconds (if enabled and running)
 	useEffect(() => {
