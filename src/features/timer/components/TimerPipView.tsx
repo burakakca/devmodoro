@@ -6,6 +6,8 @@ interface TimerPipViewProps {
 	timeLeft: number;
 	mode: TimerMode;
 	isRunning: boolean;
+	hasSelectedTask: boolean;
+	isCompleted: boolean;
 	onPlay: () => void;
 	onPause: () => void;
 	onSkip: () => void;
@@ -15,6 +17,8 @@ export const TimerPipView = ({
 	timeLeft,
 	mode,
 	isRunning,
+	hasSelectedTask,
+	isCompleted,
 	onPlay,
 	onPause,
 	onSkip,
@@ -25,6 +29,8 @@ export const TimerPipView = ({
 			: mode === "shortBreak"
 				? "Short Break"
 				: "Long Break";
+
+	const showWarning = mode === "focus" && !hasSelectedTask && !isCompleted;
 
 	return (
 		<div className="flex flex-col items-center justify-center h-screen w-screen bg-theme-bg text-theme-text p-4">
@@ -42,7 +48,8 @@ export const TimerPipView = ({
 					<button
 						type="button"
 						onClick={onPlay}
-						className="p-3 rounded-full bg-primary hover:bg-primary-hover text-primary-foreground transition-colors shadow-lg"
+						disabled={showWarning}
+						className="p-3 rounded-full bg-primary hover:bg-primary-hover text-primary-foreground transition-colors shadow-lg disabled:opacity-50 disabled:cursor-not-allowed disabled:grayscale"
 						aria-label="Start timer"
 					>
 						<Play className="w-6 h-6 fill-current" />
@@ -67,6 +74,12 @@ export const TimerPipView = ({
 					<SkipForward className="w-6 h-6" />
 				</button>
 			</div>
+
+			{showWarning && (
+				<p className="text-xs text-theme-text-secondary font-medium text-center mt-4">
+					Select a task to start focusing
+				</p>
+			)}
 		</div>
 	);
 };

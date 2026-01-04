@@ -114,6 +114,7 @@ export const Timer = () => {
 		mode,
 		taskTitle: selectedTask?.title,
 		isRunning,
+		isCompleted,
 		tickingEnabled: settings.sound.tickingEnabled,
 	});
 
@@ -359,6 +360,8 @@ export const Timer = () => {
 						timeLeft={timeLeft}
 						mode={mode}
 						isRunning={isRunning}
+						hasSelectedTask={!!selectedTask}
+						isCompleted={isCompleted}
 						onPlay={handlePlay}
 						onPause={() => send({ type: "PAUSE" })}
 						onSkip={() => send({ type: "SKIP" })}
