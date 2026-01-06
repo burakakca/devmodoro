@@ -176,7 +176,6 @@ export const Timer = () => {
 				await updateTask(selectedTask.id, { status: "in-progress" });
 			}
 			playFocus();
-			send({ type: "SET_COMPLETED_POMOS", count: 0 });
 		}
 		send({ type: "START" });
 	};
@@ -222,7 +221,6 @@ export const Timer = () => {
 					await updateTask(selectedTask.id, { status: "in-progress" });
 				}
 				playFocus();
-				send({ type: "SET_COMPLETED_POMOS", count: 0 });
 			}
 			send({ type: "START" });
 		}
