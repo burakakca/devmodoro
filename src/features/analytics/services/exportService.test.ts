@@ -35,12 +35,14 @@ describe("exportService", () => {
 			return document.createElement(tag);
 		});
 
-		vi.spyOn(document.body, "appendChild").mockImplementation(
-			mockAppendChild as any,
-		);
-		vi.spyOn(document.body, "removeChild").mockImplementation(
-			mockRemoveChild as any,
-		);
+		vi.spyOn(document.body, "appendChild").mockImplementation((node) => {
+			mockAppendChild(node);
+			return node;
+		});
+		vi.spyOn(document.body, "removeChild").mockImplementation((node) => {
+			mockRemoveChild(node);
+			return node;
+		});
 	});
 
 	afterEach(() => {

@@ -16,7 +16,7 @@ export const MetricCard = memo(
 		const reducedMotion = useReducedMotion();
 
 		const content = (
-			<div className="bg-theme-bg-secondary rounded-xl p-4 flex items-start gap-3 border border-theme-border shadow-sm">
+			<div className="bg-theme-bg-secondary rounded-xl p-4 flex items-start gap-3 border border-theme-border shadow-sm h-full">
 				<div className="p-2 bg-primary/10 rounded-lg flex-shrink-0">
 					<Icon className="w-5 h-5 text-primary" aria-hidden="true" />
 				</div>
@@ -40,6 +40,7 @@ export const MetricCard = memo(
 
 		return (
 			<motion.div
+				className="h-full"
 				initial={{ opacity: 0, y: 10 }}
 				animate={{ opacity: 1, y: 0 }}
 				transition={{ duration: 0.3, delay }}
