@@ -33,7 +33,7 @@ export function generateSessionComment(data: SessionCommentData): string {
 		comment += `\n**Notes:**\n${data.notes}\n`;
 	}
 
-	comment += `\n---\n*Logged via [Devmodoro](https://github.com/devmodoro)*`;
+	comment += `\n---\n*Logged via [Devmodoro](https://github.com/burakakca/devmodoro)*`;
 
 	return comment;
 }
