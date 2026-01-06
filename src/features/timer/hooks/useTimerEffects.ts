@@ -150,10 +150,12 @@ export const useTimerEffects = ({
 					completedPomos % timerSettings.longBreakInterval === 0
 				) {
 					nextMode = "longBreak";
+					shouldAutoStart = false;
+					setShowBreakModal(true);
 				} else {
 					nextMode = "shortBreak";
+					shouldAutoStart = timerSettings.autoStartBreaks;
 				}
-				shouldAutoStart = timerSettings.autoStartBreaks;
 			} else {
 				nextMode = "focus";
 				shouldAutoStart = timerSettings.autoStartPomodoros;
@@ -167,10 +169,6 @@ export const useTimerEffects = ({
 
 				if (mode === "longBreak") {
 					send({ type: "SET_COMPLETED_POMOS", count: 0 });
-				} else if (shouldAutoStart && isLongBreakDue()) {
-					shouldAutoStart = false;
-					pendingActionRef.current = "start";
-					setShowBreakModal(true);
 				}
 			}
 
@@ -196,7 +194,6 @@ export const useTimerEffects = ({
 		getDuration,
 		send,
 		selectedTask,
-		isLongBreakDue,
 		playFocus,
 		clearSelectedTask,
 	]);

@@ -131,10 +131,19 @@ export const Timer = () => {
 		}
 		if (selectedTask?.id !== prevTaskIdRef.current) {
 			prevTaskIdRef.current = selectedTask?.id;
-			send({ type: "RESET" });
-			send({ type: "SET_MODE", mode: "focus", duration: getDuration("focus") });
+			// Only reset if we are in focus mode and not currently completing a session
+			// This prevents resetting to focus when a task is auto-deselected (completed)
+			// or when switching tasks during a break
+			if (mode === "focus" && !isCompleted) {
+				send({ type: "RESET" });
+				send({
+					type: "SET_MODE",
+					mode: "focus",
+					duration: getDuration("focus"),
+				});
+			}
 		}
-	}, [selectedTask, send, getDuration]);
+	}, [selectedTask, send, getDuration, mode, isCompleted]);
 
 	// Sync running state to theme
 	useEffect(() => {
