@@ -1,12 +1,20 @@
-import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
+import {
+	afterEach,
+	beforeEach,
+	describe,
+	expect,
+	it,
+	type Mock,
+	vi,
+} from "vitest";
 import { exportSessions } from "./exportService";
 
 describe("exportService", () => {
-	let mockCreateObjectURL: ReturnType<typeof vi.fn>;
-	let mockRevokeObjectURL: ReturnType<typeof vi.fn>;
-	let mockAppendChild: ReturnType<typeof vi.fn>;
-	let mockRemoveChild: ReturnType<typeof vi.fn>;
-	let mockClick: ReturnType<typeof vi.fn>;
+	let mockCreateObjectURL: Mock;
+	let mockRevokeObjectURL: Mock;
+	let mockAppendChild: Mock;
+	let mockRemoveChild: Mock;
+	let mockClick: Mock;
 	let createdLink: HTMLAnchorElement | null = null;
 
 	beforeEach(() => {
