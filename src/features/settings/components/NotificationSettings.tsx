@@ -41,7 +41,6 @@ export function NotificationSettings() {
 					body: "This is a test notification!",
 					icon: "/favicon.ico",
 					silent: false,
-					// @ts-expect-error - requireInteraction is not in all TS definitions
 					requireInteraction: false,
 				});
 				n.onclick = () => {

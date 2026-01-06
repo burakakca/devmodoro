@@ -56,7 +56,6 @@ export const useTimerNotifications = ({
 					body: `${title} ${body}`,
 					icon: "/favicon.ico",
 					silent: false,
-					// @ts-expect-error - requireInteraction is not in all TS definitions
 					requireInteraction: true,
 				});
 				n.onclick = () => {

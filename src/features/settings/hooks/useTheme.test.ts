@@ -185,7 +185,7 @@ describe("useTheme", () => {
 						compactMode: false,
 						isRunning: false,
 					}),
-				{ initialProps: { colorTheme: "blue" as const } },
+				{ initialProps: { colorTheme: "blue" as "blue" | "red" } },
 			);
 
 			expect(document.documentElement.classList.contains("accent-blue")).toBe(

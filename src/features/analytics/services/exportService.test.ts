@@ -35,8 +35,12 @@ describe("exportService", () => {
 			return document.createElement(tag);
 		});
 
-		vi.spyOn(document.body, "appendChild").mockImplementation(mockAppendChild);
-		vi.spyOn(document.body, "removeChild").mockImplementation(mockRemoveChild);
+		vi.spyOn(document.body, "appendChild").mockImplementation(
+			mockAppendChild as any,
+		);
+		vi.spyOn(document.body, "removeChild").mockImplementation(
+			mockRemoveChild as any,
+		);
 	});
 
 	afterEach(() => {

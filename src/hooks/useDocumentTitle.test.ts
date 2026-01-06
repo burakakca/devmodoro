@@ -76,7 +76,10 @@ describe("useDocumentTitle", () => {
 		const { rerender } = renderHook(
 			({ timeLeft, mode }) => useDocumentTitle({ timeLeft, mode }),
 			{
-				initialProps: { timeLeft: 300, mode: "focus" as const },
+				initialProps: {
+					timeLeft: 300,
+					mode: "focus" as "focus" | "shortBreak" | "longBreak",
+				},
 			},
 		);
 
