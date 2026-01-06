@@ -56,7 +56,7 @@ export const BreakSuggestionModal = ({
 				aria-label="Close modal"
 			/>
 
-			<div className="relative w-full max-w-md bg-theme-bg-secondary rounded-2xl shadow-2xl p-6 m-4">
+			<div className="relative w-full max-w-md bg-theme-bg-secondary rounded-2xl shadow-2xl border border-theme-border p-6 m-4">
 				<div className="text-center mb-6">
 					<div className="w-16 h-16 mx-auto mb-4 rounded-full bg-primary/20 flex items-center justify-center">
 						<Coffee className="w-8 h-8 text-primary" aria-hidden="true" />

@@ -36,7 +36,7 @@ export const GitHubStatsSection = memo(
 	}: GitHubStatsSectionProps) => {
 		if (isLoading) {
 			return (
-				<section className="bg-theme-bg-secondary rounded-2xl p-6">
+				<section className="bg-theme-bg-secondary rounded-2xl p-6 border border-theme-border shadow-sm">
 					<div className="h-32 bg-theme-bg-tertiary rounded-xl animate-pulse" />
 				</section>
 			);
@@ -46,7 +46,7 @@ export const GitHubStatsSection = memo(
 		if (!isConnected) {
 			return (
 				<section
-					className="bg-theme-bg-secondary rounded-2xl p-6"
+					className="bg-theme-bg-secondary rounded-2xl p-6 border border-theme-border shadow-sm"
 					aria-labelledby="github-heading"
 				>
 					<h2
@@ -86,7 +86,7 @@ export const GitHubStatsSection = memo(
 
 		return (
 			<section
-				className="bg-theme-bg-secondary rounded-2xl p-6"
+				className="bg-theme-bg-secondary rounded-2xl p-6 border border-theme-border shadow-sm"
 				aria-labelledby="github-heading"
 			>
 				<h2

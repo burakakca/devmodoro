@@ -43,11 +43,11 @@ function AnalyticsPage() {
 								{Array.from({ length: 6 }, (_, i) => i).map((i) => (
 									<div
 										key={`skeleton-analytics-${i}`}
-										className="h-24 bg-theme-bg-secondary rounded-xl animate-pulse"
+										className="h-24 bg-theme-bg-tertiary rounded-xl animate-pulse"
 									/>
 								))}
 							</div>
-							<div className="h-64 bg-theme-bg-secondary rounded-xl animate-pulse" />
+							<div className="h-64 bg-theme-bg-tertiary rounded-xl animate-pulse" />
 						</div>
 					}
 				>

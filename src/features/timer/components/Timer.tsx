@@ -240,7 +240,7 @@ export const Timer = () => {
 
 	return (
 		<section
-			className="flex flex-col items-center justify-center p-8 bg-theme-bg-secondary rounded-3xl shadow-xl text-theme-text w-full max-w-md mx-auto"
+			className="flex flex-col items-center justify-center p-8 bg-theme-bg-secondary rounded-3xl shadow-xl border border-theme-border text-theme-text w-full max-w-md mx-auto"
 			aria-labelledby="timer-heading"
 		>
 			<h2 id="timer-heading" className="sr-only">

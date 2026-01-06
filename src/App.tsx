@@ -88,7 +88,7 @@ const AppContent = () => {
 						className="w-full lg:w-80 xl:w-96 flex-shrink-0 order-2 lg:order-1"
 						aria-label="Task Management"
 					>
-						<div className="bg-theme-bg-secondary rounded-2xl p-6 space-y-6">
+						<div className="bg-theme-bg-secondary rounded-2xl p-6 space-y-6 border border-theme-border shadow-sm">
 							{/* Tabs */}
 							<div
 								className="flex gap-2"
@@ -185,7 +185,7 @@ const AppContent = () => {
 							<Timer />
 							<Suspense
 								fallback={
-									<div className="w-full max-w-md mx-auto h-32 bg-theme-bg-secondary/80 rounded-2xl animate-pulse" />
+									<div className="w-full max-w-md mx-auto h-32 bg-theme-bg-tertiary rounded-2xl animate-pulse" />
 								}
 							>
 								<SoundMixer />

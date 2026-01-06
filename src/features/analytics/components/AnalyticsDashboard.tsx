@@ -39,11 +39,11 @@ export const AnalyticsDashboard = () => {
 					{Array.from({ length: 6 }, (_, i) => i).map((i) => (
 						<div
 							key={`metric-skeleton-${timeRange}-${i}`}
-							className="h-24 bg-theme-bg-secondary rounded-xl animate-pulse"
+							className="h-24 bg-theme-bg-tertiary rounded-xl animate-pulse"
 						/>
 					))}
 				</div>
-				<div className="h-64 bg-theme-bg-secondary rounded-xl animate-pulse" />
+				<div className="h-64 bg-theme-bg-tertiary rounded-xl animate-pulse" />
 			</div>
 		);
 	}
@@ -73,7 +73,7 @@ export const AnalyticsDashboard = () => {
 
 			{/* Activity Chart */}
 			<section
-				className="bg-theme-bg-secondary rounded-2xl p-6"
+				className="bg-theme-bg-secondary rounded-2xl p-6 border border-theme-border shadow-sm"
 				aria-labelledby="activity-heading"
 			>
 				<h2
@@ -90,7 +90,7 @@ export const AnalyticsDashboard = () => {
 
 			{/* Session History */}
 			<section
-				className="bg-theme-bg-secondary rounded-2xl p-6"
+				className="bg-theme-bg-secondary rounded-2xl p-6 border border-theme-border shadow-sm"
 				aria-labelledby="history-heading"
 			>
 				<h2
