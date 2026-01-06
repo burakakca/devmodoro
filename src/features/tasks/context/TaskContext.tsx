@@ -4,6 +4,7 @@ import {
 	type ReactNode,
 	useCallback,
 	useContext,
+	useEffect,
 	useState,
 } from "react";
 import { db } from "@/db/db";
@@ -53,6 +54,13 @@ export const TaskProvider = ({ children }: { children: ReactNode }) => {
 			console.error("Failed to clear selected task ID:", e);
 		}
 	}, []);
+
+	// Automatically deselect task if it is marked as done
+	useEffect(() => {
+		if (selectedTask?.status === "done") {
+			clearSelectedTask();
+		}
+	}, [selectedTask, clearSelectedTask]);
 
 	return (
 		<TaskContext.Provider

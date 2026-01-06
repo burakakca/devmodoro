@@ -147,4 +147,30 @@ describe("TaskContext", () => {
 			expect(result.current.selectedTask).toBeNull();
 		});
 	});
+
+	describe("auto-deselect", () => {
+		it("clears selected task when status becomes done", async () => {
+			await db.tasks.add(mockTask);
+			const { result } = renderHook(() => useSelectedTask(), { wrapper });
+
+			// Select the task
+			act(() => {
+				result.current.selectTask(mockTask);
+			});
+
+			await waitFor(() => {
+				expect(result.current.selectedTask?.id).toBe(mockTask.id);
+			});
+
+			// Update task status to done
+			await act(async () => {
+				await db.tasks.update(mockTask.id, { status: "done" });
+			});
+
+			// Expect it to be cleared
+			await waitFor(() => {
+				expect(result.current.selectedTask).toBeNull();
+			});
+		});
+	});
 });
