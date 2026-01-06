@@ -72,13 +72,20 @@ function HomePage() {
 			</a>
 			<div className="max-w-7xl mx-auto">
 				<header className="mb-8 flex items-center justify-between">
-					<div className="text-center lg:text-left flex-1">
-						<h1 className="text-3xl lg:text-4xl font-bold text-theme-text mb-1 tracking-tight">
-							Devmodoro
-						</h1>
-						<p className="text-theme-text-secondary text-sm">
-							Developer Productivity Station
-						</p>
+					<div className="text-center lg:text-left flex-1 flex items-center justify-center lg:justify-start gap-3">
+						<img
+							src="/favicon.svg"
+							alt=""
+							className="w-8 h-8 lg:w-10 lg:h-10"
+						/>
+						<div>
+							<h1 className="text-3xl lg:text-4xl font-bold text-theme-text mb-0 tracking-tight leading-none">
+								Devmodoro
+							</h1>
+							<p className="text-theme-text-secondary text-sm">
+								Developer Productivity Station
+							</p>
+						</div>
 					</div>
 					<div className="flex items-center gap-2">
 						<Link

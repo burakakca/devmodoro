@@ -26,13 +26,20 @@ function AnalyticsPage() {
 					>
 						<ArrowLeft className="w-6 h-6" aria-hidden="true" />
 					</Link>
-					<div>
-						<h1 className="text-2xl lg:text-3xl font-bold text-theme-text tracking-tight">
-							Analytics
-						</h1>
-						<p className="text-theme-text-secondary text-sm">
-							Track your productivity
-						</p>
+					<div className="flex items-center gap-3">
+						<img
+							src="/favicon.svg"
+							alt=""
+							className="w-8 h-8 lg:w-10 lg:h-10"
+						/>
+						<div>
+							<h1 className="text-2xl lg:text-3xl font-bold text-theme-text tracking-tight leading-none">
+								Analytics
+							</h1>
+							<p className="text-theme-text-secondary text-sm">
+								Track your productivity
+							</p>
+						</div>
 					</div>
 				</header>
 
