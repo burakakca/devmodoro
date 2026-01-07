@@ -1,73 +1,179 @@
-# React + TypeScript + Vite
+# Devmodoro
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+A developer-focused productivity station that combines the proven Pomodoro Technique with tools designed specifically for software developers.
 
-Currently, two official plugins are available:
+## Features
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+- **Smart Timer** - Customizable work and break intervals with visual and audio notifications
+- **GitHub Integration** - Import and work on GitHub issues directly from your timer
+- **Ambient Sounds** - Mix ambient sounds like rain, coffee shop, or fireplace for optimal focus
+- **Analytics Dashboard** - Track your productivity with detailed session analytics and charts
+- **Theming** - Multiple accent colors with light/dark mode support
+- **Offline First** - Works offline with local data persistence using IndexedDB
 
-## React Compiler
+## What is the Pomodoro Technique?
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+The Pomodoro Technique is a time management method developed by Francesco Cirillo in the late 1980s. The core principle is simple:
 
-## Expanding the ESLint configuration
+1. **Choose a task** - Select one specific task to focus on
+2. **Set the timer** - Start a 25-minute focused work session
+3. **Work until the timer rings** - Focus solely on your task without distractions
+4. **Take a short break** - Rest for 5 minutes to recharge
+5. **Every 4 pomodoros, take a longer break** - After 4 cycles, take a 15-30 minute break
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+This rhythm helps maintain high levels of focus while preventing mental fatigue.
 
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
+## Tech Stack
 
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
+- **Framework**: React 19 with TypeScript
+- **Build Tool**: Vite 7
+- **Routing**: TanStack Router (file-based routing)
+- **State Management**: XState (timer), React Context, TanStack Query
+- **Styling**: Tailwind CSS 4
+- **Database**: Dexie.js (IndexedDB wrapper)
+- **Audio**: Howler.js
+- **Charts**: Recharts
+- **Animations**: Framer Motion
+- **Testing**: Vitest + Testing Library
+- **Linting**: Biome
 
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+## Getting Started
+
+### Prerequisites
+
+- Node.js 18+
+- pnpm (recommended) or npm
+
+### Installation
+
+```bash
+# Clone the repository
+git clone https://github.com/burakakca/devmodoro.git
+cd devmodoro
+
+# Install dependencies
+pnpm install
+
+# Start the development server
+pnpm dev
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+The app will be available at `http://localhost:5173`
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+## Available Scripts
 
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+| Command | Description |
+|---------|-------------|
+| `pnpm dev` | Start development server with HMR |
+| `pnpm build` | Type-check and build for production |
+| `pnpm preview` | Preview production build locally |
+| `pnpm test` | Run tests in watch mode |
+| `pnpm test:run` | Run tests once |
+| `pnpm test:coverage` | Run tests with coverage report |
+| `pnpm lint` | Run Biome linter |
+| `pnpm format` | Format code with Biome |
+| `pnpm check` | Run Biome check (lint + format) |
+| `pnpm typecheck` | Run TypeScript type checking |
+
+## Project Structure
+
 ```
+src/
+├── components/          # Shared UI components
+│   └── ui/              # Reusable UI primitives
+├── features/            # Feature-based modules
+│   ├── analytics/       # Dashboard, metrics, charts
+│   ├── audio/           # Sound mixer, audio context
+│   ├── github/          # GitHub API integration
+│   ├── settings/        # Settings modal, theme context
+│   ├── tasks/           # Task management
+│   └── timer/           # Timer component and state machine
+├── routes/              # File-based routing (TanStack Router)
+│   ├── __root.tsx       # Root layout
+│   ├── index.tsx        # Home page (timer)
+│   ├── about.tsx        # About page
+│   └── analytics.tsx    # Analytics page
+├── types/               # Shared TypeScript types
+├── AppProviders.tsx     # Context providers wrapper
+├── index.css            # Global styles and theme
+└── main.tsx             # Application entry point
+
+public/
+├── audio/               # Audio files (ambient sounds, notifications)
+├── favicon.svg          # App icon
+├── robots.txt           # SEO robots file
+└── sitemap.xml          # SEO sitemap
+```
+
+## Development
+
+### Code Style
+
+This project uses [Biome](https://biomejs.dev/) for linting and formatting. Pre-commit hooks are set up with Husky and lint-staged to ensure code quality.
+
+```bash
+# Format and lint code
+pnpm check
+```
+
+### Testing
+
+Tests are written with Vitest and Testing Library:
+
+```bash
+# Run tests in watch mode
+pnpm test
+
+# Run with coverage
+pnpm test:coverage
+```
+
+### Adding a New Route
+
+Routes are file-based using TanStack Router. To add a new page:
+
+1. Create a new file in `src/routes/` (e.g., `src/routes/my-page.tsx`)
+2. Export a route using `createFileRoute`:
+
+```tsx
+import { createFileRoute } from "@tanstack/react-router";
+
+export const Route = createFileRoute("/my-page")({
+  component: MyPage,
+});
+
+function MyPage() {
+  return <div>My Page Content</div>;
+}
+```
+
+3. The route tree will be auto-generated when you run the dev server
+
+### Adding a New Feature
+
+Features follow a modular structure:
+
+```
+src/features/my-feature/
+├── components/      # React components
+├── hooks/           # Custom hooks
+├── context/         # React context (if needed)
+├── services/        # Business logic
+└── utils/           # Utility functions
+```
+
+## Deployment
+
+The app is configured for deployment on Netlify with SPA routing support via `public/_redirects`.
+
+```bash
+# Build for production
+pnpm build
+
+# Preview the build
+pnpm preview
+```
+
+## License
+
+MIT
