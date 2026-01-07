@@ -1,5 +1,11 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { BarChart3, Github, ListPlus, Settings } from "lucide-react";
+import {
+	BarChart3,
+	Github,
+	HelpCircle,
+	ListPlus,
+	Settings,
+} from "lucide-react";
 import { lazy, Suspense, useState } from "react";
 import { TabButton } from "@/components/ui/TabButton";
 import { useSettings } from "@/features/settings/context/SettingsContext";
@@ -88,6 +94,13 @@ function HomePage() {
 						</div>
 					</div>
 					<div className="flex items-center gap-2">
+						<Link
+							to="/about"
+							className="p-3 text-theme-text-secondary hover:text-theme-text hover:bg-theme-bg-tertiary rounded-lg transition-colors focus:outline-none focus:ring-2 focus:ring-primary"
+							aria-label="About Devmodoro"
+						>
+							<HelpCircle className="w-6 h-6" aria-hidden="true" />
+						</Link>
 						<Link
 							to="/analytics"
 							className="p-3 text-theme-text-secondary hover:text-theme-text hover:bg-theme-bg-tertiary rounded-lg transition-colors focus:outline-none focus:ring-2 focus:ring-primary"

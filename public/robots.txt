@@ -1,2 +1,16 @@
+# Devmodoro - Developer Productivity Station
+# https://devmodoro.app
+
 User-agent: *
 Allow: /
+Allow: /about
+Allow: /analytics
+
+# Block build artifacts and assets from indexing
+Disallow: /assets/
+
+# Sitemap location
+Sitemap: https://devmodoro.app/sitemap.xml
+
+# Crawl-delay for respectful crawling (optional, not all bots respect this)
+Crawl-delay: 1
