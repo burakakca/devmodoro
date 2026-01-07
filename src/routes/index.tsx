@@ -16,6 +16,38 @@ import type { Task } from "@/types";
 
 export const Route = createFileRoute("/")({
 	component: HomePage,
+	head: () => ({
+		meta: [
+			{
+				title:
+					"Devmodoro - Pomodoro Timer for Developers with GitHub Integration",
+			},
+			{
+				name: "description",
+				content:
+					"The ultimate productivity station for developers. Combine Pomodoro timer with GitHub issues, ambient sounds, and analytics. Boost your coding focus today.",
+			},
+			{
+				name: "keywords",
+				content:
+					"pomodoro timer, developer tools, github integration, focus music, productivity station, coding timer, web development, time management",
+			},
+			{
+				property: "og:title",
+				content:
+					"Devmodoro - Pomodoro Timer for Developers with GitHub Integration",
+			},
+			{
+				property: "og:description",
+				content:
+					"The ultimate productivity station for developers. Combine Pomodoro timer with GitHub issues, ambient sounds, and analytics.",
+			},
+			{
+				property: "og:type",
+				content: "website",
+			},
+		],
+	}),
 });
 
 // Lazy load heavy/conditional components
@@ -68,8 +100,32 @@ function HomePage() {
 		selectTask(task);
 	};
 
+	const jsonLd = {
+		"@context": "https://schema.org",
+		"@type": "SoftwareApplication",
+		name: "Devmodoro",
+		applicationCategory: "ProductivityApplication",
+		operatingSystem: "Web",
+		offers: {
+			"@type": "Offer",
+			price: "0",
+			priceCurrency: "USD",
+		},
+		description:
+			"A developer-focused productivity station with Pomodoro timer, ambient sounds, and GitHub integration.",
+		featureList:
+			"Pomodoro Timer, GitHub Issues Integration, Ambient Sound Mixer, Productivity Analytics",
+		image: "https://devmodoro.app/favicon.svg",
+		url: "https://devmodoro.app",
+	};
+
 	return (
 		<div className="min-h-screen bg-theme-bg p-4 lg:p-8">
+			<script
+				type="application/ld+json"
+				// biome-ignore lint/security/noDangerouslySetInnerHtml: JSON-LD is safe
+				dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+			/>
 			<a
 				href="#main-timer"
 				className="sr-only focus:not-sr-only focus:fixed focus:top-4 focus:left-4 focus:z-[100] focus:px-4 focus:py-2 focus:bg-primary focus:text-white focus:rounded-lg focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary"

@@ -4,6 +4,32 @@ import { lazy, Suspense } from "react";
 
 export const Route = createFileRoute("/analytics")({
 	component: AnalyticsPage,
+	head: () => ({
+		meta: [
+			{
+				title: "Productivity Analytics - Devmodoro",
+			},
+			{
+				name: "description",
+				content:
+					"Track your productivity with detailed session analytics. View your Pomodoro history, focus time trends, and task completion rates.",
+			},
+			{
+				name: "keywords",
+				content:
+					"productivity analytics, pomodoro statistics, time tracking, developer metrics, focus stats, work trends",
+			},
+			{
+				property: "og:title",
+				content: "Productivity Analytics - Devmodoro",
+			},
+			{
+				property: "og:description",
+				content:
+					"Track your productivity with detailed session analytics. View your Pomodoro history and focus trends.",
+			},
+		],
+	}),
 });
 
 const AnalyticsDashboard = lazy(() =>
@@ -15,8 +41,21 @@ const AnalyticsDashboard = lazy(() =>
 );
 
 function AnalyticsPage() {
+	const jsonLd = {
+		"@context": "https://schema.org",
+		"@type": "WebPage",
+		name: "Productivity Analytics",
+		description: "Track your productivity with detailed session analytics",
+		url: "https://devmodoro.app/analytics",
+	};
+
 	return (
 		<div className="min-h-screen bg-theme-bg p-4 lg:p-8">
+			<script
+				type="application/ld+json"
+				// biome-ignore lint/security/noDangerouslySetInnerHtml: JSON-LD is safe
+				dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+			/>
 			<div className="max-w-6xl mx-auto">
 				<header className="mb-8 flex items-center gap-4">
 					<Link

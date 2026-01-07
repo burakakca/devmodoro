@@ -50,8 +50,37 @@ export const Route = createFileRoute("/about")({
 });
 
 function AboutPage() {
+	const jsonLd = {
+		"@context": "https://schema.org",
+		"@type": "Article",
+		headline: "About Devmodoro and the Pomodoro Technique",
+		description:
+			"Learn how to use Devmodoro to boost developer productivity with the Pomodoro technique.",
+		author: {
+			"@type": "Organization",
+			name: "Devmodoro",
+		},
+		publisher: {
+			"@type": "Organization",
+			name: "Devmodoro",
+			logo: {
+				"@type": "ImageObject",
+				url: "https://devmodoro.app/favicon.svg",
+			},
+		},
+		mainEntityOfPage: {
+			"@type": "WebPage",
+			"@id": "https://devmodoro.app/about",
+		},
+	};
+
 	return (
 		<div className="min-h-screen bg-theme-bg p-4 lg:p-8">
+			<script
+				type="application/ld+json"
+				// biome-ignore lint/security/noDangerouslySetInnerHtml: JSON-LD is safe
+				dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+			/>
 			<a
 				href="#main-content"
 				className="sr-only focus:not-sr-only focus:fixed focus:top-4 focus:left-4 focus:z-[100] focus:px-4 focus:py-2 focus:bg-primary focus:text-white focus:rounded-lg focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary"
