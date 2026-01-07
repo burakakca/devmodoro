@@ -1,6 +1,12 @@
-# Devmodoro
+<p align="center">
+  <img src="public/favicon.svg" alt="Devmodoro Logo" width="80" height="80">
+</p>
 
-A developer-focused productivity station that combines the proven Pomodoro Technique with tools designed specifically for software developers.
+<h1 align="center">Devmodoro</h1>
+
+<p align="center">
+  A developer-focused productivity station that combines the proven Pomodoro Technique with tools designed specifically for software developers.
+</p>
 
 ## Features
 
