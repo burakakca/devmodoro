@@ -143,7 +143,7 @@ export const SettingsModal = ({ isOpen, onClose }: SettingsModalProps) => {
 									}`}
 								>
 									{" "}
-									<Icon className="w-4 h-4 flex-shrink-0" aria-hidden="true" />
+									<Icon className="w-4 h-4 shrink-0" aria-hidden="true" />
 									<span className="hidden md:inline">{tab.label}</span>
 								</button>
 							);

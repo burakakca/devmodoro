@@ -105,7 +105,7 @@ function RepoGroup({
 										)}
 									</div>
 
-									<div className="flex items-center gap-1 flex-shrink-0">
+									<div className="flex items-center gap-1 shrink-0">
 										{isImporting ? (
 											<div className="flex items-center gap-1 bg-theme-bg-secondary p-1 rounded-lg shadow-lg border border-theme-border absolute right-2 top-2 z-10">
 												<input
@@ -333,7 +333,7 @@ export function GitHubIssueList({ onIssueImported }: GitHubIssueListProps) {
 					role="alert"
 					className="flex items-center gap-2 p-3 bg-red-500/10 text-red-400 rounded-lg text-sm"
 				>
-					<AlertCircle className="w-4 h-4 flex-shrink-0" aria-hidden="true" />
+					<AlertCircle className="w-4 h-4 shrink-0" aria-hidden="true" />
 					<span>
 						{error instanceof Error ? error.message : "Failed to fetch issues"}
 					</span>

@@ -9,7 +9,7 @@ export const TimerStats = memo(
 	({ completedPomos, longBreakInterval }: TimerStatsProps) => {
 		if (longBreakInterval <= 0) {
 			return (
-				<div className="mt-8 flex items-center justify-center gap-4 text-theme-text-muted text-sm min-h-[1.5rem]">
+				<div className="mt-8 flex items-center justify-center gap-4 text-theme-text-muted text-sm min-h-6">
 					<span>Focus Mode</span>
 				</div>
 			);
@@ -20,7 +20,7 @@ export const TimerStats = memo(
 			longBreakInterval - (completedPomos % longBreakInterval);
 
 		return (
-			<div className="mt-8 flex items-center justify-center gap-4 text-theme-text-muted text-sm min-h-[1.5rem]">
+			<div className="mt-8 flex items-center justify-center gap-4 text-theme-text-muted text-sm min-h-6">
 				<span className="font-medium">
 					Pomos: {currentPomo} / {longBreakInterval}
 				</span>
