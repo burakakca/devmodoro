@@ -1,16 +1,11 @@
 # Devmodoro - Developer Productivity Station
-# https://devmodoro.app
+# https://devmodoro.netlify.app
 
 User-agent: *
 Allow: /
-Allow: /about
-Allow: /analytics
-
-# Block build artifacts and assets from indexing
-Disallow: /assets/
 
 # Sitemap location
 Sitemap: https://devmodoro.netlify.app/sitemap.xml
 
-# Crawl-delay for respectful crawling (optional, not all bots respect this)
+# Crawl-delay for respectful crawling
 Crawl-delay: 1

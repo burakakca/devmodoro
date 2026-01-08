@@ -65,12 +65,12 @@ function AboutPage() {
 			name: "Devmodoro",
 			logo: {
 				"@type": "ImageObject",
-				url: "https://devmodoro.app/favicon.svg",
+				url: "https://devmodoro.netlify.app/favicon.svg",
 			},
 		},
 		mainEntityOfPage: {
 			"@type": "WebPage",
-			"@id": "https://devmodoro.app/about",
+			"@id": "https://devmodoro.netlify.app/about",
 		},
 	};
 

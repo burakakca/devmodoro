@@ -115,7 +115,7 @@ function HomePage() {
 			"A developer-focused productivity station with Pomodoro timer, ambient sounds, and GitHub integration.",
 		featureList:
 			"Pomodoro Timer, GitHub Issues Integration, Ambient Sound Mixer, Productivity Analytics",
-		image: "https://devmodoro.app/favicon.svg",
+		image: "https://devmodoro.netlify.app/favicon.svg",
 		url: "https://devmodoro.app",
 	};
 

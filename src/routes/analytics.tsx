@@ -46,7 +46,7 @@ function AnalyticsPage() {
 		"@type": "WebPage",
 		name: "Productivity Analytics",
 		description: "Track your productivity with detailed session analytics",
-		url: "https://devmodoro.app/analytics",
+		url: "https://devmodoro.netlify.app/analytics",
 	};
 
 	return (
