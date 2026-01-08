@@ -10,7 +10,7 @@ Allow: /analytics
 Disallow: /assets/
 
 # Sitemap location
-Sitemap: https://devmodoro.app/sitemap.xml
+Sitemap: https://devmodoro.netlify.app/sitemap.xml
 
 # Crawl-delay for respectful crawling (optional, not all bots respect this)
 Crawl-delay: 1
