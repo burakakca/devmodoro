@@ -362,6 +362,56 @@ function AboutPage() {
 						</ul>
 					</section>
 
+					{/* Open Source */}
+					<section
+						className="bg-theme-bg-secondary rounded-2xl p-6 lg:p-8 border border-theme-border shadow-sm"
+						aria-labelledby="open-source"
+					>
+						<div className="flex items-start gap-4 mb-6">
+							<div className="p-3 bg-primary/10 rounded-xl shrink-0">
+								<Github className="w-6 h-6 text-primary" aria-hidden="true" />
+							</div>
+							<div>
+								<h2
+									id="open-source"
+									className="text-xl lg:text-2xl font-bold text-theme-text mb-2"
+								>
+									Open Source
+								</h2>
+								<p className="text-theme-text-secondary">
+									Free and community-driven
+								</p>
+							</div>
+						</div>
+
+						<div className="space-y-4 text-theme-text-secondary leading-relaxed">
+							<p>
+								Devmodoro is completely open source and released under the{" "}
+								<strong className="text-theme-text">MIT License</strong>. We
+								believe in transparency and the power of community-driven
+								development.
+							</p>
+							<p>
+								Whether you want to contribute new features, report bugs, or
+								simply explore the codebase, we welcome your participation. Fork
+								the repository, submit pull requests, or star the project to
+								show your support.
+							</p>
+						</div>
+
+						<div className="mt-6">
+							<a
+								href="https://github.com/burakakca/devmodoro"
+								target="_blank"
+								rel="noopener noreferrer"
+								className="inline-flex items-center gap-2 px-5 py-2.5 bg-theme-bg-tertiary text-theme-text rounded-xl font-medium hover:bg-theme-border transition-colors focus:outline-none focus:ring-2 focus:ring-primary"
+							>
+								<Github className="w-5 h-5" aria-hidden="true" />
+								View on GitHub
+							</a>
+						</div>
+					</section>
+
 					{/* Pro Tips */}
 					<section
 						className="bg-gradient-to-br from-primary/10 to-primary/5 rounded-2xl p-6 lg:p-8 border border-primary/20"
