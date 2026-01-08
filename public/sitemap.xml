@@ -1,19 +1,19 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
-    <loc>https://devmodoro.app/</loc>
+    <loc>https://devmodoro.netlify.app/</loc>
     <lastmod>2025-01-07</lastmod>
     <changefreq>weekly</changefreq>
     <priority>1.0</priority>
   </url>
   <url>
-    <loc>https://devmodoro.app/about</loc>
+    <loc>https://devmodoro.netlify.app/about</loc>
     <lastmod>2025-01-07</lastmod>
     <changefreq>monthly</changefreq>
-    <priority>0.8</priority>
+    <priority>1.0</priority>
   </url>
   <url>
-    <loc>https://devmodoro.app/analytics</loc>
+    <loc>https://devmodoro.netlify.app/analytics</loc>
     <lastmod>2025-01-07</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
