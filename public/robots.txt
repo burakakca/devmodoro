@@ -5,7 +5,4 @@ User-agent: *
 Allow: /
 
 # Sitemap location
-Sitemap: https://devmodoro.netlify.app/sitemap.xml
-
-# Crawl-delay for respectful crawling
-Crawl-delay: 1
+Sitemap: https://devmodoro.netlify.app/sitemap.xml/
