@@ -1,4 +1,4 @@
-import { AnimatePresence, motion } from "framer-motion";
+import { AnimatePresence, m } from "framer-motion";
 import { ChevronDown } from "lucide-react";
 import { type ReactNode, useState } from "react";
 import { useReducedMotion } from "./AnimatedContainer";
@@ -76,7 +76,7 @@ export function CollapsibleGroup({
 
 			<AnimatePresence initial={false}>
 				{isExpanded && (
-					<motion.div
+					<m.div
 						id={groupId ? `${groupId}-content` : undefined}
 						initial={reducedMotion ? false : { height: 0, opacity: 0 }}
 						animate={{ height: "auto", opacity: 1 }}
@@ -85,7 +85,7 @@ export function CollapsibleGroup({
 						className="overflow-hidden"
 					>
 						<div className="pt-1">{children}</div>
-					</motion.div>
+					</m.div>
 				)}
 			</AnimatePresence>
 		</div>

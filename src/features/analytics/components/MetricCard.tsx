@@ -1,4 +1,4 @@
-import { motion } from "framer-motion";
+import { m } from "framer-motion";
 import type { LucideIcon } from "lucide-react";
 import { memo } from "react";
 import { useReducedMotion } from "@/hooks/useReducedMotion";
@@ -39,14 +39,14 @@ export const MetricCard = memo(
 		}
 
 		return (
-			<motion.div
+			<m.div
 				className="h-full"
 				initial={{ opacity: 0, y: 10 }}
 				animate={{ opacity: 1, y: 0 }}
 				transition={{ duration: 0.3, delay }}
 			>
 				{content}
-			</motion.div>
+			</m.div>
 		);
 	},
 );

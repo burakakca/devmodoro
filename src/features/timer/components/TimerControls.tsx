@@ -1,4 +1,4 @@
-import { motion } from "framer-motion";
+import { m } from "framer-motion";
 import {
 	Pause,
 	PictureInPicture2,
@@ -43,7 +43,7 @@ export const TimerControls = memo(
 			<div className="flex flex-col items-center gap-4">
 				<div className="flex gap-4">
 					{isIdle || isPaused || isCompleted ? (
-						<motion.button
+						<m.button
 							type="button"
 							onClick={onPlay}
 							disabled={isFocus && !hasSelectedTask}
@@ -70,9 +70,9 @@ export const TimerControls = memo(
 								className="w-8 h-8 fill-current text-primary-foreground"
 								aria-hidden="true"
 							/>
-						</motion.button>
+						</m.button>
 					) : (
-						<motion.button
+						<m.button
 							type="button"
 							onClick={onPause}
 							className="p-4 bg-theme-bg-tertiary hover:opacity-80 rounded-full transition-colors shadow-lg text-theme-text focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2"
@@ -81,10 +81,10 @@ export const TimerControls = memo(
 							whileTap={reducedMotion ? undefined : { scale: 0.95 }}
 						>
 							<Pause className="w-8 h-8 fill-current" aria-hidden="true" />
-						</motion.button>
+						</m.button>
 					)}
 
-					<motion.button
+					<m.button
 						type="button"
 						onClick={onReset}
 						className="p-4 bg-theme-bg-tertiary hover:opacity-80 rounded-full transition-colors text-theme-text focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2"
@@ -93,9 +93,9 @@ export const TimerControls = memo(
 						whileTap={reducedMotion ? undefined : { scale: 0.95 }}
 					>
 						<RotateCcw className="w-8 h-8" aria-hidden="true" />
-					</motion.button>
+					</m.button>
 
-					<motion.button
+					<m.button
 						type="button"
 						onClick={onSkip}
 						className="p-4 bg-theme-bg-tertiary hover:opacity-80 rounded-full transition-colors text-theme-text focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2"
@@ -104,10 +104,10 @@ export const TimerControls = memo(
 						whileTap={reducedMotion ? undefined : { scale: 0.95 }}
 					>
 						<SkipForward className="w-8 h-8" aria-hidden="true" />
-					</motion.button>
+					</m.button>
 
 					{onPip && (
-						<motion.button
+						<m.button
 							type="button"
 							onClick={onPip}
 							className="p-4 bg-theme-bg-tertiary hover:opacity-80 rounded-full transition-colors text-theme-text focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2"
@@ -116,7 +116,7 @@ export const TimerControls = memo(
 							whileTap={reducedMotion ? undefined : { scale: 0.95 }}
 						>
 							<PictureInPicture2 className="w-8 h-8" aria-hidden="true" />
-						</motion.button>
+						</m.button>
 					)}
 				</div>
 

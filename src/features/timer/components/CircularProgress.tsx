@@ -1,4 +1,4 @@
-import { AnimatePresence, motion } from "framer-motion";
+import { AnimatePresence, m } from "framer-motion";
 import { memo } from "react";
 import type { TimerMode } from "../machines/timerMachine";
 
@@ -72,7 +72,7 @@ export const CircularProgress = memo(
 				{/* Glow effect when running */}
 				<AnimatePresence>
 					{isRunning && (
-						<motion.div
+						<m.div
 							initial={{ opacity: 0, scale: 0.9 }}
 							animate={{ opacity: 1, scale: 1 }}
 							exit={{ opacity: 0, scale: 0.9 }}
@@ -87,7 +87,7 @@ export const CircularProgress = memo(
 				{/* Pulse effect on completion */}
 				<AnimatePresence>
 					{isCompleted && (
-						<motion.div
+						<m.div
 							initial={{ opacity: 0, scale: 1 }}
 							animate={{
 								opacity: [0.6, 0],
@@ -139,7 +139,7 @@ export const CircularProgress = memo(
 					/>
 
 					{/* Progress ring */}
-					<motion.circle
+					<m.circle
 						cx={center}
 						cy={center}
 						r={radius}
@@ -186,7 +186,7 @@ export const CircularProgress = memo(
 
 				{/* Time display in center */}
 				<div className="absolute inset-0 flex flex-col items-center justify-center">
-					<motion.span
+					<m.span
 						key={displayTime}
 						initial={false}
 						animate={{
@@ -203,7 +203,7 @@ export const CircularProgress = memo(
 						}}
 					>
 						{displayTime}
-					</motion.span>
+					</m.span>
 
 					{/* Progress percentage */}
 					<span className="text-sm text-theme-text-muted mt-1">

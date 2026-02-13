@@ -69,7 +69,7 @@ export default defineConfig({
 			output: {
 				manualChunks: {
 					"vendor-react": ["react", "react-dom", "react/jsx-runtime"],
-					"vendor-ui": ["framer-motion", "lucide-react"],
+					"vendor-ui": ["lucide-react"],
 					"vendor-utils": ["howler", "dexie", "dexie-react-hooks"],
 				},
 			},

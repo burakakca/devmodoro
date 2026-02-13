@@ -1,4 +1,4 @@
-import { AnimatePresence, motion, type Variants } from "framer-motion";
+import { AnimatePresence, m, type Variants } from "framer-motion";
 import { type ReactNode, useEffect, useState } from "react";
 import { useReducedMotion } from "@/hooks/useReducedMotion";
 
@@ -81,7 +81,7 @@ export const AnimatedContainer = ({
 	}
 
 	return (
-		<motion.div
+		<m.div
 			initial={preset.initial}
 			animate={preset.animate}
 			exit={preset.exit}
@@ -93,7 +93,7 @@ export const AnimatedContainer = ({
 			className={className}
 		>
 			{children}
-		</motion.div>
+		</m.div>
 	);
 };
 
@@ -148,14 +148,14 @@ export const AnimatedList = ({ children, className }: AnimatedListProps) => {
 	}
 
 	return (
-		<motion.div
+		<m.div
 			variants={staggerContainerVariants}
 			initial="hidden"
 			animate="show"
 			className={className}
 		>
 			{children}
-		</motion.div>
+		</m.div>
 	);
 };
 
@@ -180,14 +180,14 @@ export const AnimatedListItem = ({
 	}
 
 	return (
-		<motion.div
+		<m.div
 			variants={staggerItemVariants}
 			layout
 			layoutId={layoutId}
 			className={className}
 		>
 			{children}
-		</motion.div>
+		</m.div>
 	);
 };
 
@@ -228,7 +228,7 @@ export const AnimatedButton = ({
 	}
 
 	return (
-		<motion.button
+		<m.button
 			type={type}
 			className={`${className} focus:outline-none focus:ring-2 focus:ring-primary`}
 			onClick={onClick}
@@ -239,7 +239,7 @@ export const AnimatedButton = ({
 			transition={{ duration: 0.15 }}
 		>
 			{children}
-		</motion.button>
+		</m.button>
 	);
 };
 
@@ -282,14 +282,14 @@ export const Celebration = ({ show, onComplete }: CelebrationProps) => {
 	return (
 		<AnimatePresence onExitComplete={handleExitComplete}>
 			{isVisible && (
-				<motion.div
+				<m.div
 					initial={{ opacity: 0 }}
 					animate={{ opacity: 1 }}
 					exit={{ opacity: 0 }}
 					className="fixed inset-0 pointer-events-none flex items-center justify-center z-50"
 				>
 					{/* Radial pulse */}
-					<motion.div
+					<m.div
 						initial={{ scale: 0, opacity: 0.8 }}
 						animate={{
 							scale: [0, 2],
@@ -303,7 +303,7 @@ export const Celebration = ({ show, onComplete }: CelebrationProps) => {
 					/>
 
 					{/* Success checkmark */}
-					<motion.div
+					<m.div
 						initial={{ scale: 0, rotate: -180 }}
 						animate={{ scale: 1, rotate: 0 }}
 						exit={{ scale: 0, opacity: 0 }}
@@ -314,7 +314,7 @@ export const Celebration = ({ show, onComplete }: CelebrationProps) => {
 						}}
 						className="w-20 h-20 bg-success rounded-full flex items-center justify-center shadow-lg"
 					>
-						<motion.svg
+						<m.svg
 							width={40}
 							height={40}
 							viewBox="0 0 24 24"
@@ -327,15 +327,15 @@ export const Celebration = ({ show, onComplete }: CelebrationProps) => {
 							aria-labelledby="success-icon-title"
 						>
 							<title id="success-icon-title">Success checkmark</title>
-							<motion.path
+							<m.path
 								d="M5 12l5 5L19 7"
 								initial={{ pathLength: 0 }}
 								animate={{ pathLength: 1 }}
 								transition={{ duration: 0.4, delay: 0.2 }}
 							/>
-						</motion.svg>
-					</motion.div>
-				</motion.div>
+						</m.svg>
+					</m.div>
+				</m.div>
 			)}
 		</AnimatePresence>
 	);
