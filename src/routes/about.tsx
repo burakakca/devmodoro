@@ -83,7 +83,7 @@ function AboutPage() {
 			/>
 			<a
 				href="#main-content"
-				className="sr-only focus:not-sr-only focus:fixed focus:top-4 focus:left-4 focus:z-[100] focus:px-4 focus:py-2 focus:bg-primary focus:text-white focus:rounded-lg focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary"
+				className="sr-only focus:not-sr-only focus:fixed focus:top-4 focus:left-4 focus:z-100 focus:px-4 focus:py-2 focus:bg-primary focus:text-white focus:rounded-lg focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary"
 			>
 				Skip to main content
 			</a>
@@ -118,7 +118,7 @@ function AboutPage() {
 				<main id="main-content" className="space-y-8">
 					{/* Hero Section */}
 					<section
-						className="bg-gradient-to-br from-primary/10 to-primary/5 rounded-2xl p-8 border border-primary/20"
+						className="bg-linear-to-br from-primary/10 to-primary/5 rounded-2xl p-8 border border-primary/20"
 						aria-labelledby="hero-heading"
 					>
 						<div className="text-center max-w-2xl mx-auto">
@@ -414,7 +414,7 @@ function AboutPage() {
 
 					{/* Pro Tips */}
 					<section
-						className="bg-gradient-to-br from-primary/10 to-primary/5 rounded-2xl p-6 lg:p-8 border border-primary/20"
+						className="bg-linear-to-br from-primary/10 to-primary/5 rounded-2xl p-6 lg:p-8 border border-primary/20"
 						aria-labelledby="pro-tips"
 					>
 						<h2

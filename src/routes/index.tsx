@@ -128,7 +128,7 @@ function HomePage() {
 			/>
 			<a
 				href="#main-timer"
-				className="sr-only focus:not-sr-only focus:fixed focus:top-4 focus:left-4 focus:z-[100] focus:px-4 focus:py-2 focus:bg-primary focus:text-white focus:rounded-lg focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary"
+				className="sr-only focus:not-sr-only focus:fixed focus:top-4 focus:left-4 focus:z-100 focus:px-4 focus:py-2 focus:bg-primary focus:text-white focus:rounded-lg focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary"
 			>
 				Skip to main content
 			</a>
@@ -178,7 +178,7 @@ function HomePage() {
 				<div className="flex flex-col lg:flex-row gap-8">
 					{/* Sidebar - Tasks */}
 					<aside
-						className="w-full lg:w-80 xl:w-96 flex-shrink-0 order-2 lg:order-1"
+						className="w-full lg:w-80 xl:w-96 shrink-0 order-2 lg:order-1"
 						aria-label="Task Management"
 					>
 						<div className="bg-theme-bg-secondary rounded-2xl p-6 space-y-6 border border-theme-border shadow-sm">
