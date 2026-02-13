@@ -1,5 +1,6 @@
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
+import { domMax, LazyMotion } from "framer-motion";
 import type { ReactNode } from "react";
 import { AudioProvider } from "@/features/audio/context/AudioContext";
 import { SettingsProvider } from "@/features/settings/context/SettingsContext";
@@ -22,13 +23,15 @@ interface AppProvidersProps {
 export const AppProviders = ({ children }: AppProvidersProps) => {
 	return (
 		<QueryClientProvider client={queryClient}>
-			<SettingsProvider>
-				<AudioProvider>
-					<ThemeProvider>
-						<TaskProvider>{children}</TaskProvider>
-					</ThemeProvider>
-				</AudioProvider>
-			</SettingsProvider>
+			<LazyMotion features={domMax} strict>
+				<SettingsProvider>
+					<AudioProvider>
+						<ThemeProvider>
+							<TaskProvider>{children}</TaskProvider>
+						</ThemeProvider>
+					</AudioProvider>
+				</SettingsProvider>
+			</LazyMotion>
 			<ReactQueryDevtools initialIsOpen={false} />
 		</QueryClientProvider>
 	);

@@ -1,5 +1,5 @@
 import { useLiveQuery } from "dexie-react-hooks";
-import { motion } from "framer-motion";
+import { m } from "framer-motion";
 import { AnimatedContainer } from "@/components/ui/AnimatedContainer";
 import { CollapsibleGroup } from "@/components/ui/CollapsibleGroup";
 import { db } from "@/db/db";
@@ -41,7 +41,7 @@ const TaskGroup = ({
 		>
 			<ul className="space-y-2" aria-labelledby={`task-group-${status}`}>
 				{tasks.map((task, index) => (
-					<motion.div
+					<m.div
 						key={task.id}
 						layout={!reducedMotion}
 						initial={reducedMotion ? false : { opacity: 0, y: 10 }}
@@ -57,7 +57,7 @@ const TaskGroup = ({
 							isSelected={task.id === selectedTaskId}
 							onSelect={() => onSelectTask?.(task)}
 						/>
-					</motion.div>
+					</m.div>
 				))}
 			</ul>
 		</CollapsibleGroup>
