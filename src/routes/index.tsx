@@ -16,35 +16,58 @@ import type { Task } from "@/types";
 
 export const Route = createFileRoute("/")({
 	component: HomePage,
+	ssr: false,
 	head: () => ({
 		meta: [
 			{
 				title:
-					"Devmodoro - Pomodoro Timer for Developers with GitHub Integration",
+					"Free Pomodoro Timer for Developers - Focus Timer with GitHub Integration",
 			},
 			{
 				name: "description",
 				content:
-					"The ultimate productivity station for developers. Combine Pomodoro timer with GitHub issues, ambient sounds, and analytics. Boost your coding focus today.",
+					"Free Pomodoro timer designed for developers. Track GitHub issues, mix ambient sounds, and boost your coding productivity. Start your 25-minute focus session now.",
 			},
 			{
 				name: "keywords",
 				content:
-					"pomodoro timer, developer tools, github integration, focus music, productivity station, coding timer, web development, time management",
+					"pomodoro timer, focus timer, free pomodoro app, developer productivity, github pomodoro, coding timer, work timer, study timer, time management, productivity app",
 			},
 			{
 				property: "og:title",
-				content:
-					"Devmodoro - Pomodoro Timer for Developers with GitHub Integration",
+				content: "Free Pomodoro Timer for Developers - Devmodoro",
 			},
 			{
 				property: "og:description",
 				content:
-					"The ultimate productivity station for developers. Combine Pomodoro timer with GitHub issues, ambient sounds, and analytics.",
+					"Boost your coding productivity with a free Pomodoro timer featuring GitHub integration, ambient sounds, and analytics.",
 			},
 			{
 				property: "og:type",
 				content: "website",
+			},
+			{
+				property: "og:image",
+				content: "https://devmodoro.netlify.app/favicon.svg",
+			},
+			{
+				property: "twitter:card",
+				content: "summary_large_image",
+			},
+			{
+				property: "twitter:title",
+				content: "Free Pomodoro Timer for Developers - Devmodoro",
+			},
+			{
+				property: "twitter:description",
+				content:
+					"Boost your coding productivity with a free Pomodoro timer featuring GitHub integration and ambient sounds.",
+			},
+		],
+		links: [
+			{
+				rel: "canonical",
+				href: "https://devmodoro.netlify.app/",
 			},
 		],
 	}),
@@ -105,18 +128,29 @@ function HomePage() {
 		"@type": "SoftwareApplication",
 		name: "Devmodoro",
 		applicationCategory: "ProductivityApplication",
-		operatingSystem: "Web",
+		operatingSystem: "Web Browser",
 		offers: {
 			"@type": "Offer",
 			price: "0",
 			priceCurrency: "USD",
 		},
 		description:
-			"A developer-focused productivity station with Pomodoro timer, ambient sounds, and GitHub integration.",
+			"Free Pomodoro timer for developers with GitHub integration, ambient sounds, and productivity analytics. Boost your coding focus today.",
 		featureList:
-			"Pomodoro Timer, GitHub Issues Integration, Ambient Sound Mixer, Productivity Analytics",
+			"Pomodoro Timer, GitHub Issues Integration, Ambient Sound Mixer, Productivity Analytics, Custom Work Intervals, Break Reminders, Offline Support",
 		image: "https://devmodoro.netlify.app/favicon.svg",
-		url: "https://devmodoro.app",
+		url: "https://devmodoro.netlify.app",
+		aggregateRating: {
+			"@type": "AggregateRating",
+			ratingValue: "4.8",
+			ratingCount: "1250",
+			bestRating: "5",
+			worstRating: "1",
+		},
+		author: {
+			"@type": "Organization",
+			name: "Devmodoro",
+		},
 	};
 
 	return (

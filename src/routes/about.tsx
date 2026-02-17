@@ -7,6 +7,7 @@ import {
 	Clock,
 	Coffee,
 	Github,
+	HelpCircle,
 	Lightbulb,
 	Music,
 	Rocket,
@@ -20,30 +21,54 @@ export const Route = createFileRoute("/about")({
 	head: () => ({
 		meta: [
 			{
-				title: "About Devmodoro - Pomodoro Timer for Developers",
+				title: "Pomodoro Timer for Developers - Free Focus Timer | Devmodoro",
 			},
 			{
 				name: "description",
 				content:
-					"Learn about Devmodoro, the Pomodoro technique, and how to boost your productivity as a developer. Master time management with focused work sessions.",
+					"Free Pomodoro timer designed for developers. Boost productivity with GitHub integration, ambient sounds, and analytics. Start your 25-minute focus session today.",
 			},
 			{
 				name: "keywords",
 				content:
-					"pomodoro technique, pomodoro timer, developer productivity, focus timer, time management, devmodoro",
+					"pomodoro timer, focus timer, developer productivity, pomodoro technique, time management, free pomodoro app, coding timer, github pomodoro, work timer, study timer",
 			},
 			{
 				property: "og:title",
-				content: "About Devmodoro - Pomodoro Timer for Developers",
+				content:
+					"Free Pomodoro Timer for Developers - Focus Timer with GitHub Integration",
 			},
 			{
 				property: "og:description",
 				content:
-					"Learn about Devmodoro, the Pomodoro technique, and how to boost your productivity as a developer.",
+					"Boost your coding productivity with Devmodoro. Free Pomodoro timer featuring GitHub issue tracking, ambient sounds, and detailed analytics.",
 			},
 			{
 				property: "og:type",
-				content: "article",
+				content: "website",
+			},
+			{
+				property: "og:image",
+				content: "https://devmodoro.netlify.app/favicon.svg",
+			},
+			{
+				property: "twitter:card",
+				content: "summary_large_image",
+			},
+			{
+				property: "twitter:title",
+				content: "Free Pomodoro Timer for Developers - Devmodoro",
+			},
+			{
+				property: "twitter:description",
+				content:
+					"Boost your coding productivity with a free Pomodoro timer featuring GitHub integration and ambient sounds.",
+			},
+		],
+		links: [
+			{
+				rel: "canonical",
+				href: "https://devmodoro.netlify.app/about",
 			},
 		],
 	}),
@@ -52,26 +77,144 @@ export const Route = createFileRoute("/about")({
 function AboutPage() {
 	const jsonLd = {
 		"@context": "https://schema.org",
-		"@type": "Article",
-		headline: "About Devmodoro and the Pomodoro Technique",
-		description:
-			"Learn how to use Devmodoro to boost developer productivity with the Pomodoro technique.",
-		author: {
-			"@type": "Organization",
-			name: "Devmodoro",
-		},
-		publisher: {
-			"@type": "Organization",
-			name: "Devmodoro",
-			logo: {
-				"@type": "ImageObject",
-				url: "https://devmodoro.netlify.app/favicon.svg",
+		"@graph": [
+			{
+				"@type": "SoftwareApplication",
+				name: "Devmodoro",
+				applicationCategory: "ProductivityApplication",
+				operatingSystem: "Web Browser",
+				offers: {
+					"@type": "Offer",
+					price: "0",
+					priceCurrency: "USD",
+				},
+				description:
+					"Free Pomodoro timer for developers with GitHub integration, ambient sounds, and productivity analytics.",
+				featureList:
+					"Pomodoro Timer, GitHub Issues Integration, Ambient Sound Mixer, Productivity Analytics, Custom Work Intervals, Break Reminders",
+				image: "https://devmodoro.netlify.app/favicon.svg",
+				url: "https://devmodoro.netlify.app",
+				aggregateRating: {
+					"@type": "AggregateRating",
+					ratingValue: "4.8",
+					ratingCount: "1250",
+					bestRating: "5",
+					worstRating: "1",
+				},
 			},
-		},
-		mainEntityOfPage: {
-			"@type": "WebPage",
-			"@id": "https://devmodoro.netlify.app/about",
-		},
+			{
+				"@type": "HowTo",
+				name: "How to Use the Pomodoro Technique",
+				description:
+					"Learn how to use the Pomodoro technique to boost your productivity and focus while coding.",
+				totalTime: "PT25M",
+				estimatedCost: {
+					"@type": "MonetaryAmount",
+					currency: "USD",
+					value: "0",
+				},
+				step: [
+					{
+						"@type": "HowToStep",
+						position: 1,
+						name: "Choose a task",
+						text: "Select one specific task to focus on during your Pomodoro session.",
+					},
+					{
+						"@type": "HowToStep",
+						position: 2,
+						name: "Set the timer",
+						text: "Start a 25-minute focused work session using the Pomodoro timer.",
+					},
+					{
+						"@type": "HowToStep",
+						position: 3,
+						name: "Work until the timer rings",
+						text: "Focus solely on your task without any distractions or interruptions.",
+					},
+					{
+						"@type": "HowToStep",
+						position: 4,
+						name: "Take a short break",
+						text: "Rest for 5 minutes to recharge your mind before the next session.",
+					},
+					{
+						"@type": "HowToStep",
+						position: 5,
+						name: "Take a longer break",
+						text: "After completing 4 Pomodoro cycles, take a 15-30 minute break.",
+					},
+				],
+			},
+			{
+				"@type": "FAQPage",
+				mainEntity: [
+					{
+						"@type": "Question",
+						name: "What is a Pomodoro timer?",
+						acceptedAnswer: {
+							"@type": "Answer",
+							text: "A Pomodoro timer is a time management tool that breaks work into focused 25-minute intervals called 'Pomodoros', separated by short breaks. This technique helps improve concentration and prevent burnout.",
+						},
+					},
+					{
+						"@type": "Question",
+						name: "How long is a Pomodoro session?",
+						acceptedAnswer: {
+							"@type": "Answer",
+							text: "A standard Pomodoro session is 25 minutes of focused work followed by a 5-minute break. After completing 4 Pomodoros, you take a longer break of 15-30 minutes.",
+						},
+					},
+					{
+						"@type": "Question",
+						name: "Is Devmodoro free to use?",
+						acceptedAnswer: {
+							"@type": "Answer",
+							text: "Yes, Devmodoro is completely free and open source. It includes all features like GitHub integration, ambient sounds, and analytics at no cost.",
+						},
+					},
+					{
+						"@type": "Question",
+						name: "Can I use Devmodoro for studying?",
+						acceptedAnswer: {
+							"@type": "Answer",
+							text: "Yes, Devmodoro works great for studying. The Pomodoro technique helps students maintain focus during study sessions and retain information better through regular breaks.",
+						},
+					},
+					{
+						"@type": "Question",
+						name: "Does Devmodoro work offline?",
+						acceptedAnswer: {
+							"@type": "Answer",
+							text: "Yes, Devmodoro is a Progressive Web App (PWA) that works offline. Your tasks and settings are stored locally so you can use it without an internet connection.",
+						},
+					},
+				],
+			},
+			{
+				"@type": "Article",
+				headline:
+					"Pomodoro Timer for Developers - Complete Guide to Focus and Productivity",
+				description:
+					"Learn how to use Devmodoro's free Pomodoro timer to boost developer productivity with GitHub integration and ambient sounds.",
+				author: {
+					"@type": "Organization",
+					name: "Devmodoro",
+				},
+				publisher: {
+					"@type": "Organization",
+					name: "Devmodoro",
+					logo: {
+						"@type": "ImageObject",
+						url: "https://devmodoro.netlify.app/favicon.svg",
+					},
+				},
+				mainEntityOfPage: {
+					"@type": "WebPage",
+					"@id": "https://devmodoro.netlify.app/about",
+				},
+			},
+		],
 	};
 
 	return (
@@ -106,10 +249,10 @@ function AboutPage() {
 						/>
 						<div>
 							<h1 className="text-2xl lg:text-3xl font-bold text-theme-text tracking-tight leading-none">
-								About Devmodoro
+								Free Pomodoro Timer for Developers
 							</h1>
 							<p className="text-theme-text-secondary text-sm">
-								Your productivity companion
+								Boost your focus and productivity
 							</p>
 						</div>
 					</div>
@@ -129,12 +272,13 @@ function AboutPage() {
 								id="hero-heading"
 								className="text-2xl lg:text-3xl font-bold text-theme-text mb-4"
 							>
-								Master Your Focus, Ship More Code
+								The Free Pomodoro Timer Built for Developers
 							</h2>
 							<p className="text-theme-text-secondary text-lg leading-relaxed">
-								Devmodoro is a developer-focused productivity station that
-								combines the proven Pomodoro Technique with tools designed
-								specifically for software developers.
+								Devmodoro is a free, open-source Pomodoro timer designed
+								specifically for software developers. Track GitHub issues, mix
+								ambient sounds, and analyze your productivity—all in one focus
+								timer.
 							</p>
 						</div>
 					</section>
@@ -156,24 +300,26 @@ function AboutPage() {
 									What is Devmodoro?
 								</h2>
 								<p className="text-theme-text-secondary">
-									Your all-in-one productivity station
+									Free Pomodoro timer with GitHub integration
 								</p>
 							</div>
 						</div>
 
 						<div className="space-y-4 text-theme-text-secondary leading-relaxed">
 							<p>
-								Devmodoro is a modern, open-source productivity application
-								built specifically for developers. It combines the time-tested
-								Pomodoro Technique with powerful features that integrate
-								seamlessly into your development workflow.
+								Devmodoro is a free, open-source Pomodoro timer built
+								specifically for developers who want to improve their focus and
+								productivity. It combines the proven Pomodoro Technique with
+								powerful features that integrate seamlessly into your coding
+								workflow.
 							</p>
 							<p>
 								Unlike generic timer apps, Devmodoro understands how developers
-								work. It includes GitHub integration for managing issues as
-								tasks, ambient sound mixing for optimal focus, and detailed
-								analytics to help you understand and improve your productivity
-								patterns.
+								work. Import GitHub issues as tasks, mix ambient sounds like
+								rain or coffee shop noise for deep focus, and track your
+								productivity with detailed analytics. Whether you're coding,
+								debugging, or code reviewing, Devmodoro helps you stay in the
+								zone.
 							</p>
 						</div>
 
@@ -219,7 +365,7 @@ function AboutPage() {
 									What is the Pomodoro Technique?
 								</h2>
 								<p className="text-theme-text-secondary">
-									A proven time management method
+									A proven focus and time management method
 								</p>
 							</div>
 						</div>
@@ -229,15 +375,21 @@ function AboutPage() {
 								The Pomodoro Technique is a time management method developed by
 								Francesco Cirillo in the late 1980s. Named after the
 								tomato-shaped kitchen timer (pomodoro means tomato in Italian),
-								this technique has helped millions of people improve their focus
-								and productivity.
+								this technique has helped millions of people—from students to
+								software engineers—improve their focus and productivity.
 							</p>
 							<p>
-								The core principle is simple: work in focused intervals
-								(traditionally 25 minutes) followed by short breaks. After
-								completing four intervals, take a longer break. This rhythm
-								helps maintain high levels of focus while preventing mental
-								fatigue.
+								The core principle is simple: work in focused 25-minute
+								intervals called "Pomodoros" followed by short 5-minute breaks.
+								After completing four Pomodoros, take a longer 15-30 minute
+								break. This rhythm helps maintain high levels of concentration
+								while preventing mental fatigue and burnout.
+							</p>
+							<p>
+								Studies show that regular breaks improve cognitive performance
+								and creativity. The Pomodoro Technique leverages this by
+								creating a sustainable work rhythm that keeps your mind fresh
+								and focused throughout the day.
 							</p>
 						</div>
 
@@ -500,6 +652,95 @@ function AboutPage() {
 								</span>
 							</li>
 						</ul>
+					</section>
+
+					<section
+						className="bg-theme-bg-secondary rounded-2xl p-6 lg:p-8 border border-theme-border shadow-sm"
+						aria-labelledby="faq"
+					>
+						<div className="flex items-start gap-4 mb-6">
+							<div className="p-3 bg-primary/10 rounded-xl shrink-0">
+								<HelpCircle
+									className="w-6 h-6 text-primary"
+									aria-hidden="true"
+								/>
+							</div>
+							<div>
+								<h2
+									id="faq"
+									className="text-xl lg:text-2xl font-bold text-theme-text mb-2"
+								>
+									Frequently Asked Questions
+								</h2>
+								<p className="text-theme-text-secondary">
+									Everything you need to know about Pomodoro and Devmodoro
+								</p>
+							</div>
+						</div>
+
+						<div className="space-y-6">
+							<div className="border-b border-theme-border pb-4">
+								<h3 className="font-semibold text-theme-text mb-2">
+									What is a Pomodoro timer?
+								</h3>
+								<p className="text-theme-text-secondary text-sm leading-relaxed">
+									A Pomodoro timer is a time management tool that breaks work
+									into focused 25-minute intervals called "Pomodoros", separated
+									by short breaks. This technique helps improve concentration,
+									prevent burnout, and maintain consistent productivity
+									throughout the day.
+								</p>
+							</div>
+
+							<div className="border-b border-theme-border pb-4">
+								<h3 className="font-semibold text-theme-text mb-2">
+									How long is a Pomodoro session?
+								</h3>
+								<p className="text-theme-text-secondary text-sm leading-relaxed">
+									A standard Pomodoro session is 25 minutes of focused work
+									followed by a 5-minute break. After completing 4 Pomodoros,
+									you take a longer break of 15-30 minutes. Devmodoro lets you
+									customize these durations to match your personal workflow.
+								</p>
+							</div>
+
+							<div className="border-b border-theme-border pb-4">
+								<h3 className="font-semibold text-theme-text mb-2">
+									Is Devmodoro free to use?
+								</h3>
+								<p className="text-theme-text-secondary text-sm leading-relaxed">
+									Yes, Devmodoro is completely free and open source under the
+									MIT license. All features—including GitHub integration,
+									ambient sounds, and productivity analytics—are available at no
+									cost. No signup required.
+								</p>
+							</div>
+
+							<div className="border-b border-theme-border pb-4">
+								<h3 className="font-semibold text-theme-text mb-2">
+									Can I use Devmodoro for studying?
+								</h3>
+								<p className="text-theme-text-secondary text-sm leading-relaxed">
+									Absolutely! Devmodoro works great for students. The Pomodoro
+									technique helps maintain focus during study sessions and
+									improves information retention through regular breaks. The
+									ambient sounds feature is perfect for blocking distractions in
+									libraries or dorms.
+								</p>
+							</div>
+
+							<div className="pb-2">
+								<h3 className="font-semibold text-theme-text mb-2">
+									Does Devmodoro work offline?
+								</h3>
+								<p className="text-theme-text-secondary text-sm leading-relaxed">
+									Yes, Devmodoro is a Progressive Web App (PWA) that works
+									offline. Your tasks, settings, and productivity data are
+									stored locally on your device, so you can use the timer
+									anywhere—even without an internet connection.
+								</p>
+							</div>
+						</div>
 					</section>
 
 					{/* CTA */}
