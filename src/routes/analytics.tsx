@@ -4,6 +4,7 @@ import { lazy, Suspense } from "react";
 
 export const Route = createFileRoute("/analytics")({
 	component: AnalyticsPage,
+	ssr: false,
 	head: () => ({
 		meta: [
 			{
@@ -27,6 +28,12 @@ export const Route = createFileRoute("/analytics")({
 				property: "og:description",
 				content:
 					"Track your productivity with detailed session analytics. View your Pomodoro history and focus trends.",
+			},
+		],
+		links: [
+			{
+				rel: "canonical",
+				href: "https://devmodoro.netlify.app/analytics",
 			},
 		],
 	}),

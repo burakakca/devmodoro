@@ -1,6 +1,10 @@
 [build]
   command = "pnpm run build"
-  publish = "dist"
+  publish = "dist/client"
+
+[dev]
+  command = "pnpm run dev"
+  port = 3000
 
 [[headers]]
   for = "/sitemap.xml"
@@ -13,8 +17,3 @@
   [headers.values]
     Content-Type = "text/plain"
     Cache-Control = "public, max-age=0, must-revalidate"
-
-[[redirects]]
-  from = "/*"
-  to = "/index.html"
-  status = 200

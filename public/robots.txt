@@ -1,8 +1,7 @@
-# Devmodoro - Developer Productivity Station
+# Devmodoro - Free Pomodoro Timer for Developers
 # https://devmodoro.netlify.app
 
 User-agent: *
 Allow: /
 
-# Sitemap location
-Sitemap: https://devmodoro.netlify.app/sitemap.xml/
+Sitemap: https://devmodoro.netlify.app/sitemap.xml
