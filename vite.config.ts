@@ -32,6 +32,35 @@ export default defineConfig({
 		target: "es2022",
 		minify: "esbuild" as const,
 		chunkSizeWarningLimit: 500,
+		rollupOptions: {
+			output: {
+				manualChunks: (id) => {
+					if (id.includes("node_modules")) {
+						if (id.includes("framer-motion")) {
+							return "framer-motion";
+						}
+						if (id.includes("recharts")) {
+							return "recharts";
+						}
+						if (id.includes("howler")) {
+							return "howler";
+						}
+						if (id.includes("xstate") || id.includes("@xstate")) {
+							return "xstate";
+						}
+						if (id.includes("dexie")) {
+							return "dexie";
+						}
+						if (id.includes("lucide-react")) {
+							return "lucide";
+						}
+						if (id.includes("@tanstack/react-query")) {
+							return "react-query";
+						}
+					}
+				},
+			},
+		},
 	},
 	test: {
 		globals: true,
