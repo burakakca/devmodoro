@@ -87,10 +87,10 @@ export default defineConfig({
 						urlPattern: /^https:\/\/api\.github\.com\/.*/i,
 						handler: "NetworkFirst",
 						options: {
-							cacheName: "github-api-cache",
+							cacheName: "github-api-cache-v1",
 							expiration: {
 								maxEntries: 50,
-								maxAgeSeconds: 60 * 60 * 24, // 24 hours
+								maxAgeSeconds: 60 * 60 * 24,
 							},
 							cacheableResponse: {
 								statuses: [0, 200],
@@ -101,10 +101,10 @@ export default defineConfig({
 						urlPattern: /\.(?:mp3|wav)$/i,
 						handler: "CacheFirst",
 						options: {
-							cacheName: "audio-cache",
+							cacheName: "audio-cache-v1",
 							expiration: {
 								maxEntries: 20,
-								maxAgeSeconds: 60 * 60 * 24 * 30, // 30 days
+								maxAgeSeconds: 60 * 60 * 24 * 30,
 							},
 							cacheableResponse: {
 								statuses: [0, 200],
@@ -115,7 +115,7 @@ export default defineConfig({
 						urlPattern: ({ request }) => request.destination === "document",
 						handler: "NetworkFirst",
 						options: {
-							cacheName: "pages-cache",
+							cacheName: "pages-cache-v1",
 						},
 					},
 				],

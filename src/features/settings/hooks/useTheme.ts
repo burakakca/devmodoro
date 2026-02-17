@@ -22,6 +22,7 @@ export function useTheme({
 }: UseThemeOptions) {
 	useEffect(() => {
 		const root = document.documentElement;
+		root.classList.add("theme-transition");
 
 		// 1. Handle App Themes (dark, light, system)
 		root.classList.remove("dark", "light");
