@@ -90,6 +90,10 @@ export const Route = createRootRoute({
 				type: "image/svg+xml",
 				href: "/favicon.svg",
 			},
+			{
+				rel: "manifest",
+				href: "/manifest.json",
+			},
 		],
 	}),
 	errorComponent: ErrorPage,

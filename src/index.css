@@ -162,8 +162,11 @@
 	--radius-xl: calc(var(--radius) + 4px);
 }
 
-/* Theme transition */
-* {
+/* Theme transition - scoped to app elements only, not Vite overlay */
+html.theme-transition,
+html.theme-transition *,
+html.theme-transition *::before,
+html.theme-transition *::after {
 	transition:
 		background-color 0.3s ease,
 		color 0.3s ease,
