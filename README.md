@@ -32,8 +32,8 @@ This rhythm helps maintain high levels of focus while preventing mental fatigue.
 ## Tech Stack
 
 - **Framework**: React 19 with TypeScript
+- **Full-Stack Framework**: TanStack Start (SSR & Routing)
 - **Build Tool**: Vite 7
-- **Routing**: TanStack Router (file-based routing)
 - **State Management**: XState (timer), React Context, TanStack Query
 - **Styling**: Tailwind CSS 4
 - **Database**: Dexie.js (IndexedDB wrapper)
@@ -64,14 +64,15 @@ pnpm install
 pnpm dev
 ```
 
-The app will be available at `http://localhost:5173`
+The app will be available at `http://localhost:3000`
 
 ## Available Scripts
 
 | Command | Description |
 |---------|-------------|
 | `pnpm dev` | Start development server with HMR |
-| `pnpm build` | Type-check and build for production |
+| `pnpm build` | Build for production (Client + SSR) |
+| `pnpm start` | Start the production server locally |
 | `pnpm preview` | Preview production build locally |
 | `pnpm test` | Run tests in watch mode |
 | `pnpm test:run` | Run tests once |
@@ -101,8 +102,10 @@ src/
 │   └── analytics.tsx    # Analytics page
 ├── types/               # Shared TypeScript types
 ├── AppProviders.tsx     # Context providers wrapper
-├── index.css            # Global styles and theme
-└── main.tsx             # Application entry point
+├── client.tsx           # Client entry point
+├── server.ts            # Server entry point
+├── router.tsx           # Router configuration
+└── index.css            # Global styles and theme
 
 public/
 ├── audio/               # Audio files (ambient sounds, notifications)
@@ -111,73 +114,20 @@ public/
 └── sitemap.xml          # SEO sitemap
 ```
 
-## Development
+## Performance
 
-### Code Style
-
-This project uses [Biome](https://biomejs.dev/) for linting and formatting. Pre-commit hooks are set up with Husky and lint-staged to ensure code quality.
-
-```bash
-# Format and lint code
-pnpm check
-```
-
-### Testing
-
-Tests are written with Vitest and Testing Library:
-
-```bash
-# Run tests in watch mode
-pnpm test
-
-# Run with coverage
-pnpm test:coverage
-```
-
-### Adding a New Route
-
-Routes are file-based using TanStack Router. To add a new page:
-
-1. Create a new file in `src/routes/` (e.g., `src/routes/my-page.tsx`)
-2. Export a route using `createFileRoute`:
-
-```tsx
-import { createFileRoute } from "@tanstack/react-router";
-
-export const Route = createFileRoute("/my-page")({
-  component: MyPage,
-});
-
-function MyPage() {
-  return <div>My Page Content</div>;
-}
-```
-
-3. The route tree will be auto-generated when you run the dev server
-
-### Adding a New Feature
-
-Features follow a modular structure:
-
-```
-src/features/my-feature/
-├── components/      # React components
-├── hooks/           # Custom hooks
-├── context/         # React context (if needed)
-├── services/        # Business logic
-└── utils/           # Utility functions
-```
+The application uses Vite's `manualChunks` to split vendor libraries into separate chunks for better caching and faster initial loads. Large dependencies like `recharts`, `framer-motion`, `dexie`, `xstate`, and `react-query` are bundled separately.
 
 ## Deployment
 
-The app is configured for deployment on Netlify with SPA routing support via `public/_redirects`.
+The app is configured for deployment on Netlify with Server-Side Rendering (SSR) via `@netlify/vite-plugin-tanstack-start`.
 
 ```bash
 # Build for production
 pnpm build
 
-# Preview the build
-pnpm preview
+# Start production server
+pnpm start
 ```
 
 ## License
